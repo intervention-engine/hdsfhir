@@ -19,9 +19,16 @@ func (s *HDSSuite) SetUpSuite(c *C) {
 
 var _ = Suite(&HDSSuite{})
 
-func (s *HDSSuite) TestExtractPATIENT(c *C) {
+func (s *HDSSuite) TestExtractPatient(c *C) {
 	patient := Patient{}
 	err := json.Unmarshal(s.JSONBlob, &patient)
 	util.CheckErr(err)
 	c.Assert("John", Equals, patient.FirstName)
+}
+
+func (s *HDSSuite) TestBirthTime(c *C) {
+	patient := Patient{}
+	err := json.Unmarshal(s.JSONBlob, &patient)
+	util.CheckErr(err)
+	c.Assert(2, Equals, patient.BirthTime())
 }
