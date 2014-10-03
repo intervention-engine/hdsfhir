@@ -1,4 +1,4 @@
-package hdstofhir
+package hdsfhir
 
 type Patient struct {
 	FirstName string `json:"first"`
