@@ -1,5 +1,6 @@
 {
   "first": "John",
   "last": "Peters",
-  "birthdate": 665420400
+  "birthdate": 665420400,
+  "gender": "M"
 }
