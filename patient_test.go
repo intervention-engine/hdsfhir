@@ -2,9 +2,12 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/pebbe/util"
 	. "gopkg.in/check.v1"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -44,4 +47,18 @@ func (s *HDSSuite) TestToJSON(c *C) {
 	util.CheckErr(err)
 	data := patient.ToJSON()
 	c.Assert(data, NotNil)
+}
+
+func (s *HDSSuite) TestUpload(c *C) {
+	patient := Patient{}
+	err := json.Unmarshal(s.JSONBlob, &patient)
+	util.CheckErr(err)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c.Assert(r.Header.Get("Content-Type"), Equals, "application/json+fhir")
+		w.Header().Add("Location", "http://localhost/patients/1234")
+		fmt.Fprintln(w, "Created")
+	}))
+	defer ts.Close()
+	patient.Upload(ts.URL)
+	c.Assert(patient.ServerURL, Equals, "http://localhost/patients/1234")
 }

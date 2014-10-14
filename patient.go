@@ -1,7 +1,9 @@
 package hdsfhir
 
 import (
+	"bytes"
 	"encoding/json"
+	"net/http"
 	"time"
 )
 
@@ -38,4 +40,14 @@ func (p *Patient) ToJSON() []byte {
 	}
 	json, _ := json.Marshal(f)
 	return json
+}
+
+func (p *Patient) Upload(url string) {
+	body := bytes.NewReader(p.ToJSON())
+	response, err := http.Post(url, "application/json+fhir", body)
+	defer response.Body.Close()
+	if err != nil {
+		panic("HTTP request failed")
+	}
+	p.ServerURL = response.Header.Get("Location")
 }
