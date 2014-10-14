@@ -6,11 +6,12 @@ import (
 )
 
 type Patient struct {
-	FirstName     string  `json:"first"`
-	LastName      string  `json:"last"`
-	UnixBirthTime int64   `json:"birthdate"`
-	Gender        string  `json:"gender"`
-	Encounters    []Entry `json:"encounters"`
+	FirstName     string      `json:"first"`
+	LastName      string      `json:"last"`
+	UnixBirthTime int64       `json:"birthdate"`
+	Gender        string      `json:"gender"`
+	Encounters    []Entry     `json:"encounters"`
+	Conditions    []Condition `json:"conditions"`
 	ServerURL     string
 }
 
