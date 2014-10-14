@@ -11,6 +11,7 @@ type Patient struct {
 	UnixBirthTime int64   `json:"birthdate"`
 	Gender        string  `json:"gender"`
 	Encounters    []Entry `json:"encounters"`
+	ServerURL     string
 }
 
 func (p *Patient) BirthTime() time.Time {

@@ -13,6 +13,9 @@ func EncounterToJSON(p *Patient, e *Entry) []byte {
 			"start": UnixToFHIRDate(e.StartTime),
 			"end":   UnixToFHIRDate(e.EndTime),
 		},
+		"subject": map[string]string{
+			"reference": p.ServerURL,
+		},
 	}
 	json, _ := json.Marshal(f)
 	return json

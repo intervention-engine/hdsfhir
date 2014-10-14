@@ -17,6 +17,7 @@ type Entry struct {
 	Codes       map[string][]string `json:"codes"`
 	NegationInd bool                `json:"negationInd"`
 	StatusCode  map[string][]string `json:"status_code"`
+	Description string              `json:"description"`
 }
 
 func (e *Entry) ConvertCodingToFHIR() []FHIRCoding {
