@@ -9,7 +9,7 @@ type Condition struct {
 	Severity map[string][]string `json:"severity"`
 }
 
-func ConditionToJSON(p *Patient, c *Condition) []byte {
+func (c *Condition) ToJSON() []byte {
 	f := map[string]interface{}{
 		"code": map[string][]FHIRCoding{
 			"coding": c.ConvertCodingToFHIR(),
@@ -17,7 +17,7 @@ func ConditionToJSON(p *Patient, c *Condition) []byte {
 		"onsetDate":     UnixToFHIRDate(c.StartTime),
 		"abatementDate": UnixToFHIRDate(c.EndTime),
 		"subject": map[string]string{
-			"reference": p.ServerURL,
+			"reference": c.Patient.ServerURL,
 		},
 	}
 	json, _ := json.Marshal(f)

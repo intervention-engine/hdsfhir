@@ -4,7 +4,12 @@ import (
 	"encoding/json"
 )
 
-func EncounterToJSON(p *Patient, e *Entry) []byte {
+type Encounter struct {
+	Entry
+	DischargeDisposition map[string][]string `json:"severity"`
+}
+
+func (e *Encounter) ToJSON() []byte {
 	f := map[string]interface{}{
 		"type": map[string][]FHIRCoding{
 			"coding": e.ConvertCodingToFHIR(),
@@ -14,7 +19,7 @@ func EncounterToJSON(p *Patient, e *Entry) []byte {
 			"end":   UnixToFHIRDate(e.EndTime),
 		},
 		"subject": map[string]string{
-			"reference": p.ServerURL,
+			"reference": e.Patient.ServerURL,
 		},
 	}
 	json, _ := json.Marshal(f)

@@ -28,30 +28,30 @@ func (s *HDSSuite) SetUpSuite(c *C) {
 var _ = Suite(&HDSSuite{})
 
 func (s *HDSSuite) TestExtractPatient(c *C) {
-	patient := Patient{}
-	err := json.Unmarshal(s.JSONBlob, &patient)
+	patient := &Patient{}
+	err := json.Unmarshal(s.JSONBlob, patient)
 	util.CheckErr(err)
 	c.Assert("John", Equals, patient.FirstName)
 }
 
 func (s *HDSSuite) TestBirthTime(c *C) {
-	patient := Patient{}
-	err := json.Unmarshal(s.JSONBlob, &patient)
+	patient := &Patient{}
+	err := json.Unmarshal(s.JSONBlob, patient)
 	util.CheckErr(err)
 	c.Assert(time.February, Equals, patient.BirthTime().Month())
 }
 
 func (s *HDSSuite) TestToJSON(c *C) {
-	patient := Patient{}
-	err := json.Unmarshal(s.JSONBlob, &patient)
+	patient := &Patient{}
+	err := json.Unmarshal(s.JSONBlob, patient)
 	util.CheckErr(err)
 	data := patient.ToJSON()
 	c.Assert(data, NotNil)
 }
 
 func (s *HDSSuite) TestUpload(c *C) {
-	patient := Patient{}
-	err := json.Unmarshal(s.JSONBlob, &patient)
+	patient := &Patient{}
+	err := json.Unmarshal(s.JSONBlob, patient)
 	util.CheckErr(err)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c.Assert(r.Header.Get("Content-Type"), Equals, "application/json+fhir")
@@ -59,6 +59,6 @@ func (s *HDSSuite) TestUpload(c *C) {
 		fmt.Fprintln(w, "Created")
 	}))
 	defer ts.Close()
-	patient.Upload(ts.URL)
+	Upload(patient, ts.URL)
 	c.Assert(patient.ServerURL, Equals, "http://localhost/patients/1234")
 }

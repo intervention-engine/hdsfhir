@@ -22,9 +22,10 @@ func (s *ConditionSuite) SetUpSuite(c *C) {
 	s.Patient = patient
 	util.CheckErr(err)
 	s.Condition = &patient.Conditions[0]
+	s.Condition.Patient = patient
 }
 
 func (s *ConditionSuite) TestToJSON(c *C) {
-	data := ConditionToJSON(s.Patient, s.Condition)
+	data := s.Condition.ToJSON()
 	c.Assert(data, NotNil)
 }

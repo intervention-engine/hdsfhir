@@ -1,9 +1,7 @@
 package hdsfhir
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
 	"time"
 )
 
@@ -12,9 +10,13 @@ type Patient struct {
 	LastName      string      `json:"last"`
 	UnixBirthTime int64       `json:"birthdate"`
 	Gender        string      `json:"gender"`
-	Encounters    []Entry     `json:"encounters"`
+	Encounters    []Encounter `json:"encounters"`
 	Conditions    []Condition `json:"conditions"`
-	ServerURL     string
+	ServerURL     string      `json:"-"`
+}
+
+func (p *Patient) SetServerURL(url string) {
+	p.ServerURL = url
 }
 
 func (p *Patient) BirthTime() time.Time {
@@ -40,14 +42,4 @@ func (p *Patient) ToJSON() []byte {
 	}
 	json, _ := json.Marshal(f)
 	return json
-}
-
-func (p *Patient) Upload(url string) {
-	body := bytes.NewReader(p.ToJSON())
-	response, err := http.Post(url, "application/json+fhir", body)
-	defer response.Body.Close()
-	if err != nil {
-		panic("HTTP request failed")
-	}
-	p.ServerURL = response.Header.Get("Location")
 }

@@ -1,8 +1,15 @@
 package hdsfhir
 
 import (
+	"bytes"
+	"net/http"
 	"time"
 )
+
+type Uploadable interface {
+	ToJSON() []byte
+	SetServerURL(string)
+}
 
 type FHIRCoding struct {
 	System string `json:"system"`
@@ -10,6 +17,7 @@ type FHIRCoding struct {
 }
 
 type Entry struct {
+	Patient     *Patient            `json:"-"`
 	StartTime   int64               `json:"start_time"`
 	EndTime     int64               `json:"end_time"`
 	Time        int64               `json:"time"`
@@ -18,6 +26,11 @@ type Entry struct {
 	NegationInd bool                `json:"negationInd"`
 	StatusCode  map[string][]string `json:"status_code"`
 	Description string              `json:"description"`
+	ServerURL   string              `json:"-"`
+}
+
+func (e *Entry) SetServerURL(url string) {
+	e.ServerURL = url
 }
 
 func (e *Entry) ConvertCodingToFHIR() []FHIRCoding {
@@ -34,6 +47,16 @@ func (e *Entry) ConvertCodingToFHIR() []FHIRCoding {
 
 func UnixToFHIRDate(unixTime int64) string {
 	return time.Unix(unixTime, 0).Format("2006-01-02")
+}
+
+func Upload(thing Uploadable, url string) {
+	body := bytes.NewReader(thing.ToJSON())
+	response, err := http.Post(url, "application/json+fhir", body)
+	defer response.Body.Close()
+	if err != nil {
+		panic("HTTP request failed")
+	}
+	thing.SetServerURL(response.Header.Get("Location"))
 }
 
 var CodeSystemMap = map[string]string{

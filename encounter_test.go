@@ -8,7 +8,7 @@ import (
 )
 
 type EncounterSuite struct {
-	Encounter *Entry
+	Encounter *Encounter
 	Patient   *Patient
 }
 
@@ -22,9 +22,10 @@ func (s *EncounterSuite) SetUpSuite(c *C) {
 	s.Patient = patient
 	util.CheckErr(err)
 	s.Encounter = &patient.Encounters[0]
+	s.Encounter.Patient = patient
 }
 
 func (s *EncounterSuite) TestToJSON(c *C) {
-	data := EncounterToJSON(s.Patient, s.Encounter)
+	data := s.Encounter.ToJSON()
 	c.Assert(data, NotNil)
 }
