@@ -21,7 +21,7 @@ func (s *EncounterSuite) SetUpSuite(c *C) {
 	err = json.Unmarshal(data, patient)
 	s.Patient = patient
 	util.CheckErr(err)
-	s.Encounter = &patient.Encounters[0]
+	s.Encounter = patient.Encounters[0]
 	s.Encounter.Patient = patient
 }
 

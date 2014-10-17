@@ -21,7 +21,7 @@ func (s *ConditionSuite) SetUpSuite(c *C) {
 	err = json.Unmarshal(data, patient)
 	s.Patient = patient
 	util.CheckErr(err)
-	s.Condition = &patient.Conditions[0]
+	s.Condition = patient.Conditions[0]
 	s.Condition.Patient = patient
 }
 

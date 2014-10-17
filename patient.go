@@ -6,13 +6,13 @@ import (
 )
 
 type Patient struct {
-	FirstName     string      `json:"first"`
-	LastName      string      `json:"last"`
-	UnixBirthTime int64       `json:"birthdate"`
-	Gender        string      `json:"gender"`
-	Encounters    []Encounter `json:"encounters"`
-	Conditions    []Condition `json:"conditions"`
-	ServerURL     string      `json:"-"`
+	FirstName     string       `json:"first"`
+	LastName      string       `json:"last"`
+	UnixBirthTime int64        `json:"birthdate"`
+	Gender        string       `json:"gender"`
+	Encounters    []*Encounter `json:"encounters"`
+	Conditions    []*Condition `json:"conditions"`
+	ServerURL     string       `json:"-"`
 }
 
 func (p *Patient) SetServerURL(url string) {
@@ -27,11 +27,11 @@ func (p *Patient) PostToFHIRServer(baseURL string) {
 	Upload(p, baseURL+"/Patients")
 	for _, encounter := range p.Encounters {
 		encounter.Patient = p
-		Upload(&encounter, baseURL+"/Encounters")
+		Upload(encounter, baseURL+"/Encounters")
 	}
 	for _, condition := range p.Conditions {
 		condition.Patient = p
-		Upload(&condition, baseURL+"/Conditions")
+		Upload(condition, baseURL+"/Conditions")
 	}
 }
 

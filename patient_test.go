@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -61,4 +62,29 @@ func (s *HDSSuite) TestUpload(c *C) {
 	defer ts.Close()
 	Upload(patient, ts.URL)
 	c.Assert(patient.ServerURL, Equals, "http://localhost/patients/1234")
+}
+
+func (s *HDSSuite) TestPostToFHIRServer(c *C) {
+	patient := &Patient{}
+	err := json.Unmarshal(s.JSONBlob, patient)
+	util.CheckErr(err)
+	resourceCount := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c.Assert(r.Header.Get("Content-Type"), Equals, "application/json+fhir")
+		switch {
+		case strings.Contains(r.RequestURI, "Patients"):
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Patients/%d", resourceCount))
+		case strings.Contains(r.RequestURI, "Encounters"):
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Encounters/%d", resourceCount))
+		case strings.Contains(r.RequestURI, "Conditions"):
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Conditions/%d", resourceCount))
+		}
+		fmt.Fprintln(w, "Created")
+		resourceCount++
+	}))
+	defer ts.Close()
+	patient.PostToFHIRServer(ts.URL)
+	c.Assert(patient.ServerURL, Equals, "http://localhost/Patients/0")
+	c.Assert(resourceCount, Equals, 10)
+	c.Assert(patient.Encounters[0].ServerURL, Equals, "http://localhost/Encounters/1")
 }
