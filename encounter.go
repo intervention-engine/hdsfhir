@@ -11,8 +11,8 @@ type Encounter struct {
 
 func (e *Encounter) ToJSON() []byte {
 	f := map[string]interface{}{
-		"type": map[string][]FHIRCoding{
-			"coding": e.ConvertCodingToFHIR(),
+		"type": []FHIRCodableConcept{
+			FHIRCodableConcept{Codings: e.ConvertCodingToFHIR()},
 		},
 		"period": map[string]string{
 			"start": UnixToFHIRDate(e.StartTime),

@@ -24,26 +24,21 @@ func (p *Patient) BirthTime() time.Time {
 }
 
 func (p *Patient) PostToFHIRServer(baseURL string) {
-	Upload(p, baseURL+"/Patients")
+	Upload(p, baseURL+"/Patient")
 	for _, encounter := range p.Encounters {
 		encounter.Patient = p
-		Upload(encounter, baseURL+"/Encounters")
+		Upload(encounter, baseURL+"/Encounter")
 	}
 	for _, condition := range p.Conditions {
 		condition.Patient = p
-		Upload(condition, baseURL+"/Conditions")
+		Upload(condition, baseURL+"/Condition")
 	}
 }
 
 func (p *Patient) ToJSON() []byte {
 	f := map[string]interface{}{
-		"name": map[string][]string{
-			"family": []string{
-				p.LastName,
-			},
-			"given": []string{
-				p.FirstName,
-			},
+		"name": []FHIRName{
+			FHIRName{FirstName: []string{p.FirstName}, LastName: []string{p.LastName}},
 		},
 		"gender": map[string]interface{}{
 			"coding": []FHIRCoding{

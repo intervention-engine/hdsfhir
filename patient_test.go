@@ -72,11 +72,11 @@ func (s *HDSSuite) TestPostToFHIRServer(c *C) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c.Assert(r.Header.Get("Content-Type"), Equals, "application/json+fhir")
 		switch {
-		case strings.Contains(r.RequestURI, "Patients"):
+		case strings.Contains(r.RequestURI, "Patient"):
 			w.Header().Add("Location", fmt.Sprintf("http://localhost/Patients/%d", resourceCount))
-		case strings.Contains(r.RequestURI, "Encounters"):
+		case strings.Contains(r.RequestURI, "Encounter"):
 			w.Header().Add("Location", fmt.Sprintf("http://localhost/Encounters/%d", resourceCount))
-		case strings.Contains(r.RequestURI, "Conditions"):
+		case strings.Contains(r.RequestURI, "Condition"):
 			w.Header().Add("Location", fmt.Sprintf("http://localhost/Conditions/%d", resourceCount))
 		}
 		fmt.Fprintln(w, "Created")

@@ -16,6 +16,15 @@ type FHIRCoding struct {
 	Code   string `json:"code"`
 }
 
+type FHIRCodableConcept struct {
+	Codings []FHIRCoding `json:"coding"`
+}
+
+type FHIRName struct {
+	FirstName []string `json:"given"`
+	LastName  []string `json:"family"`
+}
+
 type Entry struct {
 	Patient     *Patient            `json:"-"`
 	StartTime   int64               `json:"start_time"`
@@ -34,7 +43,7 @@ func (e *Entry) SetServerURL(url string) {
 }
 
 func (e *Entry) ConvertCodingToFHIR() []FHIRCoding {
-	codings := make([]FHIRCoding, 3)
+	codings := make([]FHIRCoding, 0)
 	for codeSystem, codes := range e.Codes {
 		codeSystemURL := CodeSystemMap[codeSystem]
 		for _, code := range codes {
@@ -52,7 +61,6 @@ func UnixToFHIRDate(unixTime int64) string {
 func Upload(thing Uploadable, url string) {
 	body := bytes.NewReader(thing.ToJSON())
 	response, err := http.Post(url, "application/json+fhir", body)
-	defer response.Body.Close()
 	if err != nil {
 		panic("HTTP request failed")
 	}
