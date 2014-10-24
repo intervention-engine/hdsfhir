@@ -14,11 +14,13 @@ func (c *Condition) ToJSON() []byte {
 		"code": map[string][]FHIRCoding{
 			"coding": c.ConvertCodingToFHIR(),
 		},
-		"onsetDate":     UnixToFHIRDate(c.StartTime),
-		"abatementDate": UnixToFHIRDate(c.EndTime),
+		"onsetDate": UnixToFHIRDate(c.StartTime),
 		"subject": map[string]string{
 			"reference": c.Patient.ServerURL,
 		},
+	}
+	if c.EndTime != 0 {
+		f["abatementDate"] = UnixToFHIRDate(c.EndTime)
 	}
 	json, _ := json.Marshal(f)
 	return json
