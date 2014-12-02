@@ -2,6 +2,7 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"gitlab.mitre.org/intervention-engine/fhir/models"
 )
 
 type Condition struct {
@@ -10,18 +11,14 @@ type Condition struct {
 }
 
 func (c *Condition) ToJSON() []byte {
-	f := map[string]interface{}{
-		"code": map[string][]FHIRCoding{
-			"coding": c.ConvertCodingToFHIR(),
-		},
-		"onsetDate": UnixToFHIRDate(c.StartTime),
-		"subject": map[string]string{
-			"reference": c.Patient.ServerURL,
-		},
-	}
+	fhirCondition := models.Condition{}
+	fhirCondition.Code = c.ConvertCodingToFHIR()
+	fhirCondition.OnsetDate = models.FHIRDateTime{Time: c.StartTimestamp(), Precision: models.Timestamp}
+	fhirCondition.Subject = models.Reference{Reference: c.Patient.ServerURL}
+
 	if c.EndTime != 0 {
-		f["abatementDate"] = UnixToFHIRDate(c.EndTime)
+		fhirCondition.AbatementDate = models.FHIRDateTime{Time: c.EndTimestamp(), Precision: models.Timestamp}
 	}
-	json, _ := json.Marshal(f)
+	json, _ := json.Marshal(fhirCondition)
 	return json
 }

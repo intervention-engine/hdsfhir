@@ -2,17 +2,19 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"gitlab.mitre.org/intervention-engine/fhir/models"
 	"time"
 )
 
 type Patient struct {
-	FirstName     string       `json:"first"`
-	LastName      string       `json:"last"`
-	UnixBirthTime int64        `json:"birthdate"`
-	Gender        string       `json:"gender"`
-	Encounters    []*Encounter `json:"encounters"`
-	Conditions    []*Condition `json:"conditions"`
-	ServerURL     string       `json:"-"`
+	FirstName        string              `json:"first"`
+	LastName         string              `json:"last"`
+	UnixBirthTime    int64               `json:"birthdate"`
+	Gender           string              `json:"gender"`
+	Encounters       []*Encounter        `json:"encounters"`
+	Conditions       []*Condition        `json:"conditions"`
+	MedicalEquipment []*MedicalEquipment `json:"medical_equipment"`
+	ServerURL        string              `json:"-"`
 }
 
 func (p *Patient) SetServerURL(url string) {
@@ -36,17 +38,10 @@ func (p *Patient) PostToFHIRServer(baseURL string) {
 }
 
 func (p *Patient) ToJSON() []byte {
-	f := map[string]interface{}{
-		"name": []FHIRName{
-			FHIRName{FirstName: []string{p.FirstName}, LastName: []string{p.LastName}},
-		},
-		"gender": map[string]interface{}{
-			"coding": []FHIRCoding{
-				FHIRCoding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender},
-			},
-		},
-		"birthDate": p.BirthTime().Format("2006-01-02"),
-	}
-	json, _ := json.Marshal(f)
+	fhirPatient := models.Patient{}
+	fhirPatient.Name = []models.HumanName{models.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
+	fhirPatient.Gender = models.CodeableConcept{Coding: []models.Coding{models.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
+	fhirPatient.BirthDate = models.FHIRDateTime{Time: p.BirthTime(), Precision: models.Precision("date")}
+	json, _ := json.Marshal(fhirPatient)
 	return json
 }

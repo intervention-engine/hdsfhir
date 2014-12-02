@@ -17,7 +17,7 @@ func (s *CoreSuite) TestExtractPatient(c *C) {
 
 	codings := entry.ConvertCodingToFHIR()
 	found := false
-	for _, coding := range codings {
+	for _, coding := range codings.Coding {
 		if coding.Code == "abcd" && coding.System == "http://www.ama-assn.org/go/cpt" {
 			found = true
 		}

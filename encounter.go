@@ -2,6 +2,7 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"gitlab.mitre.org/intervention-engine/fhir/models"
 )
 
 type Encounter struct {
@@ -9,19 +10,18 @@ type Encounter struct {
 	DischargeDisposition map[string][]string `json:"severity"`
 }
 
+func (e *Encounter) Period() models.Period {
+	period := models.Period{}
+	period.Start = models.FHIRDateTime{Time: e.StartTimestamp(), Precision: models.Timestamp}
+	period.End = models.FHIRDateTime{Time: e.EndTimestamp(), Precision: models.Timestamp}
+	return period
+}
+
 func (e *Encounter) ToJSON() []byte {
-	f := map[string]interface{}{
-		"type": []FHIRCodableConcept{
-			FHIRCodableConcept{Codings: e.ConvertCodingToFHIR()},
-		},
-		"period": map[string]string{
-			"start": UnixToFHIRDate(e.StartTime),
-			"end":   UnixToFHIRDate(e.EndTime),
-		},
-		"subject": map[string]string{
-			"reference": e.Patient.ServerURL,
-		},
-	}
-	json, _ := json.Marshal(f)
+	fhirEncounter := models.Encounter{}
+	fhirEncounter.Type = []models.CodeableConcept{e.ConvertCodingToFHIR()}
+	fhirEncounter.Period = e.Period()
+	fhirEncounter.Subject = models.Reference{Reference: e.Patient.ServerURL}
+	json, _ := json.Marshal(fhirEncounter)
 	return json
 }

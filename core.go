@@ -2,6 +2,7 @@ package hdsfhir
 
 import (
 	"bytes"
+	"gitlab.mitre.org/intervention-engine/fhir/models"
 	"net/http"
 	"time"
 )
@@ -42,16 +43,26 @@ func (e *Entry) SetServerURL(url string) {
 	e.ServerURL = url
 }
 
-func (e *Entry) ConvertCodingToFHIR() []FHIRCoding {
-	codings := make([]FHIRCoding, 0)
+func (e *Entry) ConvertCodingToFHIR() models.CodeableConcept {
+	concept := models.CodeableConcept{}
+	codings := make([]models.Coding, 0)
 	for codeSystem, codes := range e.Codes {
 		codeSystemURL := CodeSystemMap[codeSystem]
 		for _, code := range codes {
-			coding := FHIRCoding{System: codeSystemURL, Code: code}
+			coding := models.Coding{System: codeSystemURL, Code: code}
 			codings = append(codings, coding)
 		}
 	}
-	return codings
+	concept.Coding = codings
+	return concept
+}
+
+func (e *Entry) StartTimestamp() time.Time {
+	return time.Unix(e.StartTime, 0)
+}
+
+func (e *Entry) EndTimestamp() time.Time {
+	return time.Unix(e.EndTime, 0)
 }
 
 func UnixToFHIRDate(unixTime int64) string {
