@@ -85,6 +85,6 @@ func (s *HDSSuite) TestPostToFHIRServer(c *C) {
 	defer ts.Close()
 	patient.PostToFHIRServer(ts.URL)
 	c.Assert(patient.ServerURL, Equals, "http://localhost/Patients/0")
-	c.Assert(resourceCount, Equals, 10)
+	c.Assert(resourceCount, Equals, 11)
 	c.Assert(patient.Encounters[0].ServerURL, Equals, "http://localhost/Encounters/1")
 }

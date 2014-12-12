@@ -65,6 +65,17 @@ func (e *Entry) EndTimestamp() time.Time {
 	return time.Unix(e.EndTime, 0)
 }
 
+func (e *Entry) AsFHIRPeriod() models.Period {
+	period := models.Period{}
+	period.Start = models.FHIRDateTime{Time: e.StartTimestamp(), Precision: models.Timestamp}
+	period.End = models.FHIRDateTime{Time: e.EndTimestamp(), Precision: models.Timestamp}
+	return period
+}
+
+func (self *Entry) Overlaps(other Entry) bool {
+	return (self.StartTime <= other.EndTime && self.EndTime >= other.StartTime)
+}
+
 func UnixToFHIRDate(unixTime int64) string {
 	return time.Unix(unixTime, 0).Format("2006-01-02")
 }

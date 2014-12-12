@@ -13,6 +13,7 @@ type Patient struct {
 	Gender        string       `json:"gender"`
 	Encounters    []*Encounter `json:"encounters"`
 	Conditions    []*Condition `json:"conditions"`
+	VitalSigns    []*VitalSign `json:"vital_signs"`
 	ServerURL     string       `json:"-"`
 }
 
@@ -34,6 +35,21 @@ func (p *Patient) PostToFHIRServer(baseURL string) {
 		condition.Patient = p
 		Upload(condition, baseURL+"/Condition")
 	}
+	for _, observation := range p.VitalSigns {
+		// find matching encounter
+		observation.Patient = p
+		Upload(observation, baseURL+"/Observation")
+	}
+}
+
+func (self *Patient) MatchingEncounter(entry Entry) Encounter {
+	for _, encounter := range self.Encounters {
+		// TODO: Overlaps may not be the right thing here... maybe closest?
+		if encounter.Overlaps(entry) {
+			return *encounter
+		}
+	}
+	return Encounter{}
 }
 
 func (p *Patient) ToJSON() []byte {

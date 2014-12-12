@@ -10,18 +10,15 @@ type Encounter struct {
 	DischargeDisposition map[string][]string `json:"severity"`
 }
 
-func (e *Encounter) Period() models.Period {
-	period := models.Period{}
-	period.Start = models.FHIRDateTime{Time: e.StartTimestamp(), Precision: models.Timestamp}
-	period.End = models.FHIRDateTime{Time: e.EndTimestamp(), Precision: models.Timestamp}
-	return period
+func (e *Encounter) ToFhirModel() models.Encounter {
+	fhirEncounter := models.Encounter{}
+	fhirEncounter.Type = []models.CodeableConcept{e.ConvertCodingToFHIR()}
+	fhirEncounter.Period = e.AsFHIRPeriod()
+	fhirEncounter.Subject = models.Reference{Reference: e.Patient.ServerURL}
+	return fhirEncounter
 }
 
 func (e *Encounter) ToJSON() []byte {
-	fhirEncounter := models.Encounter{}
-	fhirEncounter.Type = []models.CodeableConcept{e.ConvertCodingToFHIR()}
-	fhirEncounter.Period = e.Period()
-	fhirEncounter.Subject = models.Reference{Reference: e.Patient.ServerURL}
-	json, _ := json.Marshal(fhirEncounter)
+	json, _ := json.Marshal(e.ToFhirModel())
 	return json
 }
