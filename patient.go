@@ -7,14 +7,13 @@ import (
 )
 
 type Patient struct {
-	FirstName        string              `json:"first"`
-	LastName         string              `json:"last"`
-	UnixBirthTime    int64               `json:"birthdate"`
-	Gender           string              `json:"gender"`
-	Encounters       []*Encounter        `json:"encounters"`
-	Conditions       []*Condition        `json:"conditions"`
-	MedicalEquipment []*MedicalEquipment `json:"medical_equipment"`
-	ServerURL        string              `json:"-"`
+	FirstName     string       `json:"first"`
+	LastName      string       `json:"last"`
+	UnixBirthTime int64        `json:"birthdate"`
+	Gender        string       `json:"gender"`
+	Encounters    []*Encounter `json:"encounters"`
+	Conditions    []*Condition `json:"conditions"`
+	ServerURL     string       `json:"-"`
 }
 
 func (p *Patient) SetServerURL(url string) {
