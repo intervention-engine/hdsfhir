@@ -2,8 +2,9 @@ package hdsfhir
 
 import (
 	"encoding/json"
-	"gitlab.mitre.org/intervention-engine/fhir/models"
 	"time"
+
+	"gitlab.mitre.org/intervention-engine/fhir/models"
 )
 
 type Patient struct {
@@ -14,8 +15,11 @@ type Patient struct {
 	Encounters    []*Encounter `json:"encounters"`
 	Conditions    []*Condition `json:"conditions"`
 	VitalSigns    []*VitalSign `json:"vital_signs"`
+	Procedures    []*Procedure `json:"procedures"`
 	ServerURL     string       `json:"-"`
 }
+
+// TODO: :allergies, :care_goals, :immunizations, :medical_equipment, :medications, :procedures, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
 
 func (p *Patient) SetServerURL(url string) {
 	p.ServerURL = url
@@ -39,6 +43,13 @@ func (p *Patient) PostToFHIRServer(baseURL string) {
 		// find matching encounter
 		observation.Patient = p
 		Upload(observation, baseURL+"/Observation")
+	}
+
+	for _, procedure := range p.Procedures {
+		procedure.Patient = p
+		procedure.UploadResults(baseURL)
+		Upload(procedure, baseURL+"/Procedure")
+
 	}
 }
 
