@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.mitre.org/intervention-engine/fhir/models"
+	"github.com/intervention-engine/fhir/models"
 )
 
 type Uploadable interface {

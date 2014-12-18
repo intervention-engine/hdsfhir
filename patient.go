@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.mitre.org/intervention-engine/fhir/models"
+	"github.com/intervention-engine/fhir/models"
 )
 
 type Patient struct {

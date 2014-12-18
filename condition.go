@@ -2,7 +2,7 @@ package hdsfhir
 
 import (
 	"encoding/json"
-	"gitlab.mitre.org/intervention-engine/fhir/models"
+	"github.com/intervention-engine/fhir/models"
 )
 
 type Condition struct {
