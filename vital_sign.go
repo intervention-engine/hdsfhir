@@ -16,8 +16,8 @@ type VitalSign struct {
 func (self *VitalSign) ToFhirModel() models.Observation {
 	fhirObservation := models.Observation{Reliability: "ok", Status: "final"}
 	fhirObservation.Name = self.ConvertCodingToFHIR()
+	fhirObservation.Name.Text = self.Description
 	fhirObservation.Encounter = models.Reference{Reference: self.Patient.MatchingEncounter(self.Entry).ServerURL}
-	fhirObservation.Comments = self.Description
 
 	fhirObservation.AppliesPeriod = self.AsFHIRPeriod()
 	self.HandleValues(&fhirObservation)

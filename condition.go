@@ -13,6 +13,7 @@ type Condition struct {
 func (c *Condition) ToFhirModel() models.Condition {
 	fhirCondition := models.Condition{}
 	fhirCondition.Code = c.ConvertCodingToFHIR()
+	fhirCondition.Code.Text = c.Description
 	fhirCondition.OnsetDate = models.FHIRDateTime{Time: c.StartTimestamp(), Precision: models.Timestamp}
 	fhirCondition.Subject = models.Reference{Reference: c.Patient.ServerURL}
 

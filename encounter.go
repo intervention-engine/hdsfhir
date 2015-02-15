@@ -12,7 +12,9 @@ type Encounter struct {
 
 func (e *Encounter) ToFhirModel() models.Encounter {
 	fhirEncounter := models.Encounter{}
-	fhirEncounter.Type = []models.CodeableConcept{e.ConvertCodingToFHIR()}
+	cc := e.ConvertCodingToFHIR()
+	cc.Text = e.Description
+	fhirEncounter.Type = []models.CodeableConcept{cc}
 	fhirEncounter.Period = e.AsFHIRPeriod()
 	fhirEncounter.Subject = models.Reference{Reference: e.Patient.ServerURL}
 	return fhirEncounter

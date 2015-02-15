@@ -32,6 +32,8 @@ func (self *Procedure) ProcessResultObservations() {
 
 	for _, value := range self.Values {
 		fhirObservation := models.Observation{Reliability: "ok", Status: "final"}
+		fhirObservation.Name = self.ConvertCodingToFHIR()
+		fhirObservation.Name.Text = self.Description
 		self.HandleValue(&fhirObservation, value)
 		fhirResultObservations = append(fhirResultObservations, UploadableObservation{FhirObservation: fhirObservation})
 	}
@@ -49,6 +51,7 @@ func (self *Procedure) ProcessResultReport() {
 func (self *Procedure) ToFhirModel() models.Procedure {
 	fhirProcedure := models.Procedure{}
 	fhirProcedure.Type = self.ConvertCodingToFHIR()
+	fhirProcedure.Type.Text = self.Description
 	fhirProcedure.Encounter = models.Reference{Reference: self.Patient.MatchingEncounter(self.Entry).ServerURL}
 	fhirProcedure.Notes = self.Description
 	fhirProcedure.Date = self.AsFHIRPeriod()

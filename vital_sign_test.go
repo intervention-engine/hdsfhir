@@ -39,7 +39,7 @@ func (suite *VitalSignSuite) TestToJSON(c *C) {
 func (suite *VitalSignSuite) TestToToFhirModel(c *C) {
 	data := suite.VitalSign.ToFhirModel()
 	c.Assert(data.Subject.Reference, Equals, suite.Patient.ServerURL)
-	c.Assert(data.Comments, Equals, suite.VitalSign.Description)
+	c.Assert(data.Name.Text, Equals, suite.VitalSign.Description)
 	c.Assert(data.Encounter.Reference, Equals, "http://www.example.com/Encounter/0")
 	c.Assert(data.ValueQuantity.Value, Equals, float64(8))
 	c.Assert(data.ValueQuantity.Units, Equals, "%")
