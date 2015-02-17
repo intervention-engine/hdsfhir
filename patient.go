@@ -64,7 +64,7 @@ func (self *Patient) MatchingEncounter(entry Entry) Encounter {
 }
 
 func (p *Patient) ToJSON() []byte {
-	fhirPatient := models.Patient{}
+	fhirPatient := &models.Patient{}
 	fhirPatient.Name = []models.HumanName{models.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
 	fhirPatient.Gender = models.CodeableConcept{Coding: []models.Coding{models.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
 	fhirPatient.BirthDate = models.FHIRDateTime{Time: p.BirthTime(), Precision: models.Precision("date")}
