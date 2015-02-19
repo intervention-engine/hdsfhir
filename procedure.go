@@ -19,6 +19,9 @@ func (self *Procedure) UploadResults(baseURL string) {
 	if len(self.ResultObservations) > 0 {
 		for i := 0; i < len(self.ResultObservations); i++ {
 			current := &self.ResultObservations[i]
+			current.FhirObservation.Name = self.ConvertCodingToFHIR()
+			current.FhirObservation.Name.Text = self.Description
+			current.FhirObservation.Subject.Reference = self.Patient.ServerURL
 			Upload(current, baseURL+"/Observation")
 		}
 
