@@ -55,12 +55,21 @@ func (suite *ProcedureSuite) TestToToFhirModel(c *C) {
 	procedure2 := suite.Procedures[1].ToFhirModel()
 	c.Assert(procedure2.Subject.Reference, Equals, suite.Patient.ServerURL)
 
-	c.Assert(procedure2.Type.Coding[0].System, Equals, "http://hl7.org/fhir/sid/icd-10")
-	c.Assert(procedure2.Type.Coding[0].Code, Equals, "0210093")
-	c.Assert(procedure2.Type.Coding[1].System, Equals, "http://snomed.info/sct")
-	c.Assert(procedure2.Type.Coding[1].Code, Equals, "10190003")
-	c.Assert(procedure2.Type.Coding[2].System, Equals, "http://hl7.org/fhir/sid/icd-9")
-	c.Assert(procedure2.Type.Coding[2].Code, Equals, "36.10")
+	icd9, icd10, snomed := false, false, false
+	for _, code := range procedure2.Type.Coding {
+		switch code.System {
+		case "http://hl7.org/fhir/sid/icd-10":
+			c.Assert(code.Code, Equals, "0210093")
+			icd10 = true
+		case "http://snomed.info/sct":
+			c.Assert(code.Code, Equals, "10190003")
+			snomed = true
+		case "http://hl7.org/fhir/sid/icd-9":
+			c.Assert(code.Code, Equals, "36.10")
+			icd9 = true
+		}
+	}
+	c.Assert(icd9 && icd10 && snomed, Equals, true)
 	c.Assert(procedure2.Date.Start.Time, Equals, time.Unix(1362239100, 0))
 	c.Assert(procedure2.Date.End.Time, Equals, time.Unix(1362242700, 0))
 	c.Assert(procedure2.Encounter.Reference, Equals, "")
