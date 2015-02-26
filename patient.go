@@ -8,18 +8,19 @@ import (
 )
 
 type Patient struct {
-	FirstName     string       `json:"first"`
-	LastName      string       `json:"last"`
-	UnixBirthTime int64        `json:"birthdate"`
-	Gender        string       `json:"gender"`
-	Encounters    []*Encounter `json:"encounters"`
-	Conditions    []*Condition `json:"conditions"`
-	VitalSigns    []*VitalSign `json:"vital_signs"`
-	Procedures    []*Procedure `json:"procedures"`
-	ServerURL     string       `json:"-"`
+	FirstName     string        `json:"first"`
+	LastName      string        `json:"last"`
+	UnixBirthTime int64         `json:"birthdate"`
+	Gender        string        `json:"gender"`
+	Encounters    []*Encounter  `json:"encounters"`
+	Conditions    []*Condition  `json:"conditions"`
+	VitalSigns    []*VitalSign  `json:"vital_signs"`
+	Procedures    []*Procedure  `json:"procedures"`
+	Medications   []*Medication `json:"medications"`
+	ServerURL     string        `json:"-"`
 }
 
-// TODO: :allergies, :care_goals, :immunizations, :medical_equipment, :medications, :procedures, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
+// TODO: :allergies, :care_goals, :immunizations, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
 
 func (p *Patient) SetServerURL(url string) {
 	p.ServerURL = url
@@ -50,6 +51,15 @@ func (p *Patient) PostToFHIRServer(baseURL string) {
 		procedure.UploadResults(baseURL)
 		Upload(procedure, baseURL+"/Procedure")
 
+	}
+
+	for _, med := range p.Medications {
+		_, cvxExists := med.Codes["CVX"] // Ignores medications that are coded with CVX
+		if cvxExists != true {
+			med.Patient = p
+			med.BaseUrl = baseURL
+			Upload(med, baseURL+"/MedicationStatement")
+		}
 	}
 }
 

@@ -3,15 +3,14 @@ package hdsfhir
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pebbe/util"
+	. "gopkg.in/check.v1"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
-
-	"github.com/pebbe/util"
-	. "gopkg.in/check.v1"
 )
 
 type HDSSuite struct {
@@ -69,30 +68,37 @@ func (s *HDSSuite) TestPostToFHIRServer(c *C) {
 	patient := &Patient{}
 	err := json.Unmarshal(s.JSONBlob, patient)
 	util.CheckErr(err)
-	resourceCount, patientCount, encounterCount, conditionCount, observationCount, procedureCount, diagnosticReportCount := 0, 0, 0, 0, 0, 0, 0
+	resourceCount, patientCount, encounterCount, conditionCount, observationCount, procedureCount, diagnosticReportCount, medicationStatementCount := 0, 0, 0, 0, 0, 0, 0, 0
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c.Assert(r.Header.Get("Content-Type"), Equals, "application/json+fhir")
+		output := "Created"
 		switch {
 		case strings.Contains(r.RequestURI, "Patient"):
-			w.Header().Add("Location", fmt.Sprintf("http://localhost/Patients/%d", resourceCount))
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Patient/%d", resourceCount))
 			patientCount++
 		case strings.Contains(r.RequestURI, "Encounter"):
-			w.Header().Add("Location", fmt.Sprintf("http://localhost/Encounters/%d", resourceCount))
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Encounter/%d", resourceCount))
 			encounterCount++
 		case strings.Contains(r.RequestURI, "Condition"):
-			w.Header().Add("Location", fmt.Sprintf("http://localhost/Conditions/%d", resourceCount))
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Condition/%d", resourceCount))
 			conditionCount++
 		case strings.Contains(r.RequestURI, "Observation"):
-			w.Header().Add("Location", fmt.Sprintf("http://localhost/Observations/%d", resourceCount))
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Observation/%d", resourceCount))
 			observationCount++
 		case strings.Contains(r.RequestURI, "Procedure"):
-			w.Header().Add("Location", fmt.Sprintf("http://localhost/Procedures/%d", resourceCount))
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/Procedure/%d", resourceCount))
 			procedureCount++
 		case strings.Contains(r.RequestURI, "DiagnosticReport"):
-			w.Header().Add("Location", fmt.Sprintf("http://localhost/DiagnosticReports/%d", resourceCount))
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/DiagnosticReport/%d", resourceCount))
 			diagnosticReportCount++
+		case strings.Contains(r.RequestURI, "Medication?code="):
+			data, err := ioutil.ReadFile("./fixtures/john_peters.json")
+			util.CheckErr(err)
+			output = string(data[:])
+		case strings.Contains(r.RequestURI, "MedicationStatement"):
+			w.Header().Add("Location", fmt.Sprintf("http://localhost/MedicationStatement/%d", resourceCount))
+			medicationStatementCount++
 		}
-		fmt.Fprintln(w, "Created")
+		fmt.Fprintln(w, output)
 		resourceCount++
 	}))
 	defer ts.Close()
@@ -103,7 +109,8 @@ func (s *HDSSuite) TestPostToFHIRServer(c *C) {
 	c.Assert(observationCount, Equals, 4)
 	c.Assert(procedureCount, Equals, 2)
 	c.Assert(diagnosticReportCount, Equals, 1)
-	c.Assert(patient.ServerURL, Equals, "http://localhost/Patients/0")
-	c.Assert(resourceCount, Equals, 17)
-	c.Assert(patient.Encounters[0].ServerURL, Equals, "http://localhost/Encounters/1")
+	c.Assert(patient.ServerURL, Equals, "http://localhost/Patient/0")
+	c.Assert(resourceCount, Equals, 20)
+	c.Assert(medicationStatementCount, Equals, 1)
+	c.Assert(patient.Encounters[0].ServerURL, Equals, "http://localhost/Encounter/1")
 }

@@ -1,0 +1,60 @@
+{
+  "resourceType": "Bundle",
+  "title": "Medication Index",
+  "id": "54ef74621cd46212560006a5",
+  "updated": "2015-02-26T14:30:42.06532764-05:00",
+  "totalResults": 1,
+  "entry": [
+    {
+      "title": "Medication 54ef41931cd4621256000058",
+      "id": "54ef41931cd4621256000058",
+      "content": {
+        "Name": "Medication, Dispensed: ADHD Medications (Code List: 2.16.840.1.113883.3.464.1003.196.12.1171)",
+        "Code": {
+          "Coding": [
+            {
+              "System": "http://www.nlm.nih.gov/research/umls/rxnorm/",
+              "Version": "",
+              "Code": "1009145",
+              "Display": "",
+              "Primary": null,
+              "ValueSet": {
+                "Reference": "",
+                "Display": "",
+                "Type": "",
+                "ReferencedID": "",
+                "External": false
+              }
+            }
+          ],
+          "Text": ""
+        },
+        "IsBrand": null,
+        "Manufacturer": {
+          "Reference": "",
+          "Display": "",
+          "Type": "",
+          "ReferencedID": "",
+          "External": false
+        },
+        "Kind": "",
+        "Product": {
+          "Form": {
+            "Coding": null,
+            "Text": ""
+          },
+          "Ingredient": null
+        },
+        "Package": {
+          "Container": {
+            "Coding": null,
+            "Text": ""
+          },
+          "Content": null
+        }
+      },
+      "category": {}
+    }
+  ],
+  "category": {}
+}
