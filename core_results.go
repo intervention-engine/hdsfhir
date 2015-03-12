@@ -54,6 +54,10 @@ func (self *ResultValue) UnmarshalJSON(data []byte) (err error) {
 		local := &PhysicalQuantityResult{}
 		json.Unmarshal(data, local)
 		self.Physical = local
+	default:
+		local := &PhysicalQuantityResult{}
+		json.Unmarshal(data, local)
+		self.Physical = local
 	}
 
 	return nil
