@@ -49,8 +49,19 @@ func (m *Medication) ToJSON() []byte {
 }
 
 func (m *Medication) FindOrCreateFHIRMed() string {
-	firstRxNormCode := m.Codes["RxNorm"][0]
-	medicationQueryUrl := fmt.Sprintf("%s/Medication?code=%s|%s", m.BaseUrl, "http://www.nlm.nih.gov/research/umls/rxnorm/", firstRxNormCode)
+	var medicationQueryUrl string
+	_, rxNormPresent := m.Codes["RxNorm"]
+	if rxNormPresent {
+		firstRxNormCode := m.Codes["RxNorm"][0]
+		medicationQueryUrl = fmt.Sprintf("%s/Medication?code=%s|%s", m.BaseUrl, "http://www.nlm.nih.gov/research/umls/rxnorm/", firstRxNormCode)
+	}
+
+	_, ndcPresent := m.Codes["NDC"]
+	if ndcPresent {
+		firstNDCCode := m.Codes["NDC"]
+		medicationQueryUrl = fmt.Sprintf("%s/Medication?code=%s|%s", m.BaseUrl, "http://www.fda.gov/Drugs/InformationOnDrugs", firstNDCCode)
+	}
+
 	resp, err := http.Get(medicationQueryUrl)
 	defer resp.Body.Close()
 	if err != nil {
