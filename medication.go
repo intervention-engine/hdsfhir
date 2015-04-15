@@ -23,7 +23,7 @@ func (f FHIRMedicationWrapper) ToJSON() []byte {
 	return json
 }
 
-func (f FHIRMedicationWrapper) SetServerURL(url string) {
+func (f *FHIRMedicationWrapper) SetServerURL(url string) {
 	f.ServerURL = url
 }
 
