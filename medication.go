@@ -27,11 +27,11 @@ func (f FHIRMedicationWrapper) SetServerURL(url string) {
 	f.ServerURL = url
 }
 
-func NewMedicationWrapper(med Medication) FHIRMedicationWrapper {
+func NewMedicationWrapper(med Medication) *FHIRMedicationWrapper {
 	fhirMedication := models.Medication{}
 	fhirMedication.Code = med.ConvertCodingToFHIR()
 	fhirMedication.Name = med.Description
-	return FHIRMedicationWrapper{Medication: fhirMedication}
+	return &FHIRMedicationWrapper{Medication: fhirMedication}
 }
 
 func (m *Medication) ToFhirModel() models.MedicationStatement {
