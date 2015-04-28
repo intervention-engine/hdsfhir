@@ -36,7 +36,7 @@ func (e *Entry) SetServerURL(url string) {
 	e.ServerURL = url
 }
 
-func (e *Entry) ConvertCodingToFHIR() models.CodeableConcept {
+func (e *Entry) ConvertCodingToFHIR() *models.CodeableConcept {
 	return ConvertCodeMapToFHIR(e.Codes)
 }
 
@@ -48,10 +48,10 @@ func (e *Entry) EndTimestamp() time.Time {
 	return time.Unix(e.EndTime, 0)
 }
 
-func (e *Entry) AsFHIRPeriod() models.Period {
-	period := models.Period{}
-	period.Start = models.FHIRDateTime{Time: e.StartTimestamp(), Precision: models.Timestamp}
-	period.End = models.FHIRDateTime{Time: e.EndTimestamp(), Precision: models.Timestamp}
+func (e *Entry) AsFHIRPeriod() *models.Period {
+	period := &models.Period{}
+	period.Start = &models.FHIRDateTime{Time: e.StartTimestamp(), Precision: models.Timestamp}
+	period.End = &models.FHIRDateTime{Time: e.EndTimestamp(), Precision: models.Timestamp}
 	return period
 }
 
@@ -59,8 +59,8 @@ func (self *Entry) Overlaps(other Entry) bool {
 	return (self.StartTime <= other.EndTime && self.EndTime >= other.StartTime)
 }
 
-func ConvertCodeMapToFHIR(codeMap map[string][]string) models.CodeableConcept {
-	concept := models.CodeableConcept{}
+func ConvertCodeMapToFHIR(codeMap map[string][]string) *models.CodeableConcept {
+	concept := &models.CodeableConcept{}
 	codings := make([]models.Coding, 0)
 	for codeSystem, codes := range codeMap {
 		codeSystemURL := CodeSystemMap[codeSystem]
