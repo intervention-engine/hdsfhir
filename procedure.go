@@ -21,7 +21,7 @@ func (self *Procedure) UploadResults(baseURL string) {
 			current := &self.ResultObservations[i]
 			current.FhirObservation.Name = self.ConvertCodingToFHIR()
 			current.FhirObservation.Name.Text = self.Description
-			current.FhirObservation.Subject.Reference = self.Patient.ServerURL
+			current.FhirObservation.Subject = &models.Reference{Reference: self.Patient.ServerURL}
 			Upload(current, baseURL+"/Observation")
 		}
 
@@ -38,6 +38,7 @@ func (self *Procedure) ProcessResultObservations() {
 		fhirObservation.Name = self.ConvertCodingToFHIR()
 		fhirObservation.Name.Text = self.Description
 		self.HandleValue(&fhirObservation, value)
+		fhirObservation.AppliesPeriod = self.AsFHIRPeriod()
 		fhirResultObservations = append(fhirResultObservations, UploadableObservation{FhirObservation: fhirObservation})
 	}
 
@@ -55,14 +56,14 @@ func (self *Procedure) ToFhirModel() models.Procedure {
 	fhirProcedure := models.Procedure{}
 	fhirProcedure.Type = self.ConvertCodingToFHIR()
 	fhirProcedure.Type.Text = self.Description
-	fhirProcedure.Encounter = models.Reference{Reference: self.Patient.MatchingEncounter(self.Entry).ServerURL}
+	fhirProcedure.Encounter = &models.Reference{Reference: self.Patient.MatchingEncounter(self.Entry).ServerURL}
 	fhirProcedure.Notes = self.Description
 	fhirProcedure.Date = self.AsFHIRPeriod()
 	if self.Report.ServerURL != "" {
 		fhirProcedure.Report = append(fhirProcedure.Report, models.Reference{Reference: self.Report.ServerURL})
 	}
 
-	fhirProcedure.Subject = models.Reference{Reference: self.Patient.ServerURL}
+	fhirProcedure.Subject = &models.Reference{Reference: self.Patient.ServerURL}
 	return fhirProcedure
 }
 

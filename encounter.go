@@ -14,9 +14,9 @@ func (e *Encounter) ToFhirModel() models.Encounter {
 	fhirEncounter := models.Encounter{}
 	cc := e.ConvertCodingToFHIR()
 	cc.Text = e.Description
-	fhirEncounter.Type = []models.CodeableConcept{cc}
+	fhirEncounter.Type = []models.CodeableConcept{*cc}
 	fhirEncounter.Period = e.AsFHIRPeriod()
-	fhirEncounter.Subject = models.Reference{Reference: e.Patient.ServerURL}
+	fhirEncounter.Subject = &models.Reference{Reference: e.Patient.ServerURL}
 	return fhirEncounter
 }
 

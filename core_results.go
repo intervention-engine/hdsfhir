@@ -28,7 +28,7 @@ func (self *ThingWithResults) HandleValues(fhirObservation *models.Observation) 
 func (self *ThingWithResults) HandleValue(fhirObservation *models.Observation, value ResultValue) {
 	if value.Physical != nil {
 		if val, err := strconv.ParseFloat(value.Physical.Scalar, 64); err == nil {
-			fhirObservation.ValueQuantity = models.Quantity{Units: value.Physical.Unit, Value: val}
+			fhirObservation.ValueQuantity = &models.Quantity{Units: value.Physical.Unit, Value: val}
 		} else {
 			fhirObservation.ValueString = value.Physical.Scalar
 		}
@@ -75,7 +75,7 @@ type CodedResult struct {
 	Description string              `json:"description"`
 }
 
-func (self *CodedResult) ConvertCodingToFHIR() models.CodeableConcept {
+func (self *CodedResult) ConvertCodingToFHIR() *models.CodeableConcept {
 	c := ConvertCodeMapToFHIR(self.Codes)
 	c.Text = self.Description
 	return c

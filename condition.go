@@ -14,11 +14,11 @@ func (c *Condition) ToFhirModel() models.Condition {
 	fhirCondition := models.Condition{}
 	fhirCondition.Code = c.ConvertCodingToFHIR()
 	fhirCondition.Code.Text = c.Description
-	fhirCondition.OnsetDate = models.FHIRDateTime{Time: c.StartTimestamp(), Precision: models.Timestamp}
-	fhirCondition.Subject = models.Reference{Reference: c.Patient.ServerURL}
+	fhirCondition.OnsetDate = &models.FHIRDateTime{Time: c.StartTimestamp(), Precision: models.Timestamp}
+	fhirCondition.Subject = &models.Reference{Reference: c.Patient.ServerURL}
 
 	if c.EndTime != 0 {
-		fhirCondition.AbatementDate = models.FHIRDateTime{Time: c.EndTimestamp(), Precision: models.Timestamp}
+		fhirCondition.AbatementDate = &models.FHIRDateTime{Time: c.EndTimestamp(), Precision: models.Timestamp}
 	}
 	return fhirCondition
 }

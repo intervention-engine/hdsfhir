@@ -37,9 +37,9 @@ func NewMedicationWrapper(med Medication) *FHIRMedicationWrapper {
 func (m *Medication) ToFhirModel() models.MedicationStatement {
 	fhirMedication := models.MedicationStatement{}
 	fhirMedication.WhenGiven = m.AsFHIRPeriod()
-	fhirMedication.Patient = models.Reference{Reference: m.Patient.ServerURL}
+	fhirMedication.Patient = &models.Reference{Reference: m.Patient.ServerURL}
 	medUrl := m.FindOrCreateFHIRMed()
-	fhirMedication.Medication = models.Reference{Reference: medUrl}
+	fhirMedication.Medication = &models.Reference{Reference: medUrl}
 	return fhirMedication
 }
 
