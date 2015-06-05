@@ -12,7 +12,7 @@ type MedicationSuite struct {
 	Patient    *Patient
 }
 
-var _ = Suite(&EncounterSuite{})
+var _ = Suite(&MedicationSuite{})
 
 func (s *MedicationSuite) SetUpSuite(c *C) {
 	data, err := ioutil.ReadFile("../fixtures/john_peters.json")

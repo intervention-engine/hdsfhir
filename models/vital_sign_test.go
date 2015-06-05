@@ -36,8 +36,8 @@ func (suite *VitalSignSuite) TestToJSON(c *C) {
 	c.Assert(data, NotNil)
 }
 
-func (suite *VitalSignSuite) TestToToFhirModel(c *C) {
-	data := suite.VitalSign.ToFhirModel()
+func (suite *VitalSignSuite) TestFHIRModel(c *C) {
+	data := suite.VitalSign.FHIRModel()
 	c.Assert(data.Subject.Reference, Equals, suite.Patient.ServerURL)
 	c.Assert(data.Name.Text, Equals, suite.VitalSign.Description)
 	c.Assert(data.Encounter.Reference, Equals, "http://www.example.com/Encounter/0")

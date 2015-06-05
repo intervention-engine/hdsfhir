@@ -2,7 +2,8 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/intervention-engine/fhir/models"
+
+	fhir "github.com/intervention-engine/fhir/models"
 )
 
 type Encounter struct {
@@ -10,17 +11,16 @@ type Encounter struct {
 	DischargeDisposition map[string][]string `json:"severity"`
 }
 
-func (e *Encounter) ToFhirModel() models.Encounter {
-	fhirEncounter := models.Encounter{}
-	cc := e.ConvertCodingToFHIR()
-	cc.Text = e.Description
-	fhirEncounter.Type = []models.CodeableConcept{*cc}
-	fhirEncounter.Period = e.AsFHIRPeriod()
-	fhirEncounter.Subject = &models.Reference{Reference: e.Patient.ServerURL}
+func (e *Encounter) FHIRModel() fhir.Encounter {
+	fhirEncounter := fhir.Encounter{}
+	cc := e.Codes.FHIRCodeableConcept(e.Description)
+	fhirEncounter.Type = []fhir.CodeableConcept{*cc}
+	fhirEncounter.Period = e.GetFHIRPeriod()
+	fhirEncounter.Subject = &fhir.Reference{Reference: e.Patient.ServerURL}
 	return fhirEncounter
 }
 
 func (e *Encounter) ToJSON() []byte {
-	json, _ := json.Marshal(e.ToFhirModel())
+	json, _ := json.Marshal(e.FHIRModel())
 	return json
 }

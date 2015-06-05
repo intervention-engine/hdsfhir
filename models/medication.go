@@ -3,8 +3,9 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/intervention-engine/fhir/models"
 	"net/http"
+
+	fhir "github.com/intervention-engine/fhir/models"
 )
 
 type Medication struct {
@@ -14,7 +15,7 @@ type Medication struct {
 }
 
 type FHIRMedicationWrapper struct {
-	Medication models.Medication
+	Medication fhir.Medication
 	ServerURL  string
 }
 
@@ -28,23 +29,23 @@ func (f *FHIRMedicationWrapper) SetServerURL(url string) {
 }
 
 func NewMedicationWrapper(med Medication) *FHIRMedicationWrapper {
-	fhirMedication := models.Medication{}
-	fhirMedication.Code = med.ConvertCodingToFHIR()
+	fhirMedication := fhir.Medication{}
+	fhirMedication.Code = med.Codes.FHIRCodeableConcept(med.Description)
 	fhirMedication.Name = med.Description
 	return &FHIRMedicationWrapper{Medication: fhirMedication}
 }
 
-func (m *Medication) ToFhirModel() models.MedicationStatement {
-	fhirMedication := models.MedicationStatement{}
-	fhirMedication.WhenGiven = m.AsFHIRPeriod()
-	fhirMedication.Patient = &models.Reference{Reference: m.Patient.ServerURL}
+func (m *Medication) FHIRModel() fhir.MedicationStatement {
+	fhirMedication := fhir.MedicationStatement{}
+	fhirMedication.WhenGiven = m.GetFHIRPeriod()
+	fhirMedication.Patient = &fhir.Reference{Reference: m.Patient.ServerURL}
 	medUrl := m.FindOrCreateFHIRMed()
-	fhirMedication.Medication = &models.Reference{Reference: medUrl}
+	fhirMedication.Medication = &fhir.Reference{Reference: medUrl}
 	return fhirMedication
 }
 
 func (m *Medication) ToJSON() []byte {
-	json, _ := json.Marshal(m.ToFhirModel())
+	json, _ := json.Marshal(m.FHIRModel())
 	return json
 }
 
@@ -68,7 +69,7 @@ func (m *Medication) FindOrCreateFHIRMed() string {
 		panic(err)
 	}
 	decoder := json.NewDecoder(resp.Body)
-	medicationBundle := &models.MedicationBundle{}
+	medicationBundle := &fhir.MedicationBundle{}
 	err = decoder.Decode(medicationBundle)
 	if err != nil {
 		panic(err)

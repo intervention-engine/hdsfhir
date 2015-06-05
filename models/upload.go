@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/intervention-engine/fhir/models"
+	fhir "github.com/intervention-engine/fhir/models"
 )
 
 type Uploadable interface {
@@ -24,7 +24,7 @@ func Upload(thing Uploadable, url string) {
 
 type UploadableObservation struct {
 	ServerURL       string
-	FhirObservation models.Observation
+	FHIRObservation fhir.Observation
 }
 
 func (self *UploadableObservation) SetServerURL(url string) {
@@ -32,13 +32,13 @@ func (self *UploadableObservation) SetServerURL(url string) {
 }
 
 func (self *UploadableObservation) ToJSON() []byte {
-	json, _ := json.Marshal(self.FhirObservation)
+	json, _ := json.Marshal(self.FHIRObservation)
 	return json
 }
 
 type UploadableDiagnosticReport struct {
 	ServerURL            string
-	FhirDiagnosticReport models.DiagnosticReport
+	FHIRDiagnosticReport fhir.DiagnosticReport
 }
 
 func (self *UploadableDiagnosticReport) SetServerURL(url string) {
@@ -46,6 +46,6 @@ func (self *UploadableDiagnosticReport) SetServerURL(url string) {
 }
 
 func (self *UploadableDiagnosticReport) ToJSON() []byte {
-	json, _ := json.Marshal(self.FhirDiagnosticReport)
+	json, _ := json.Marshal(self.FHIRDiagnosticReport)
 	return json
 }

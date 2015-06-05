@@ -41,8 +41,8 @@ func (suite *ProcedureSuite) TestToJSON(c *C) {
 	}
 }
 
-func (suite *ProcedureSuite) TestToToFhirModel(c *C) {
-	procedure1 := suite.Procedures[0].ToFhirModel()
+func (suite *ProcedureSuite) TestFHIRModel(c *C) {
+	procedure1 := suite.Procedures[0].FHIRModel()
 
 	c.Assert(procedure1.Subject.Reference, Equals, suite.Patient.ServerURL)
 	c.Assert(procedure1.Type.Coding[0].System, Equals, "http://snomed.info/sct")
@@ -52,7 +52,7 @@ func (suite *ProcedureSuite) TestToToFhirModel(c *C) {
 	c.Assert(procedure1.Encounter.Reference, Equals, "http://www.example.com/Encounter/0")
 	c.Assert(procedure1.Notes, Equals, "Procedure, Result: Clinical Staging Procedure")
 
-	procedure2 := suite.Procedures[1].ToFhirModel()
+	procedure2 := suite.Procedures[1].FHIRModel()
 	c.Assert(procedure2.Subject.Reference, Equals, suite.Patient.ServerURL)
 
 	icd9, icd10, snomed := false, false, false
@@ -77,11 +77,6 @@ func (suite *ProcedureSuite) TestToToFhirModel(c *C) {
 
 }
 
-func (suite *ProcedureSuite) TestResultHandling(c *C) {
-	procedure1 := suite.Procedures[0]
-	procedure1.ProcessResultObservations()
-	c.Assert(len(procedure1.ResultObservations), Equals, 3)
-	procedure1.ProcessResultReport()
-	c.Assert(procedure1.Report, NotNil)
-
+func (suite *ProcedureSuite) TestFHIRObservationModels(c *C) {
+	c.Assert(suite.Procedures[0].FHIRObservationModels(), HasLen, 3)
 }

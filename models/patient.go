@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/intervention-engine/fhir/models"
+	fhir "github.com/intervention-engine/fhir/models"
 )
 
 type Patient struct {
@@ -66,7 +66,7 @@ func (p *Patient) PostToFHIRServer(baseURL string) {
 func (self *Patient) MatchingEncounter(entry Entry) Encounter {
 	for _, encounter := range self.Encounters {
 		// TODO: Overlaps may not be the right thing here... maybe closest?
-		if encounter.Overlaps(entry) {
+		if encounter.StartTime <= entry.EndTime && encounter.EndTime >= entry.StartTime {
 			return *encounter
 		}
 	}
@@ -74,10 +74,10 @@ func (self *Patient) MatchingEncounter(entry Entry) Encounter {
 }
 
 func (p *Patient) ToJSON() []byte {
-	fhirPatient := &models.Patient{}
-	fhirPatient.Name = []models.HumanName{models.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
-	fhirPatient.Gender = &models.CodeableConcept{Coding: []models.Coding{models.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
-	fhirPatient.BirthDate = &models.FHIRDateTime{Time: p.BirthTime(), Precision: models.Precision("date")}
+	fhirPatient := &fhir.Patient{}
+	fhirPatient.Name = []fhir.HumanName{fhir.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
+	fhirPatient.Gender = &fhir.CodeableConcept{Coding: []fhir.Coding{fhir.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
+	fhirPatient.BirthDate = &fhir.FHIRDateTime{Time: p.BirthTime(), Precision: fhir.Precision("date")}
 	json, _ := json.Marshal(fhirPatient)
 	return json
 }
