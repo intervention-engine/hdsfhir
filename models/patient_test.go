@@ -1,4 +1,4 @@
-package hdsfhir
+package models
 
 import (
 	"encoding/json"
@@ -21,7 +21,7 @@ type HDSSuite struct {
 func Test(t *testing.T) { TestingT(t) }
 
 func (s *HDSSuite) SetUpSuite(c *C) {
-	data, err := ioutil.ReadFile("./fixtures/john_peters.json")
+	data, err := ioutil.ReadFile("../fixtures/john_peters.json")
 	util.CheckErr(err)
 	s.JSONBlob = data
 }
@@ -91,7 +91,7 @@ func (s *HDSSuite) TestPostToFHIRServer(c *C) {
 			w.Header().Add("Location", fmt.Sprintf("http://localhost/DiagnosticReport/%d", resourceCount))
 			diagnosticReportCount++
 		case strings.Contains(r.RequestURI, "Medication?code="):
-			data, err := ioutil.ReadFile("./fixtures/john_peters.json")
+			data, err := ioutil.ReadFile("../fixtures/john_peters.json")
 			util.CheckErr(err)
 			output = string(data[:])
 		case strings.Contains(r.RequestURI, "MedicationStatement"):

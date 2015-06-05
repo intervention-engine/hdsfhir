@@ -1,4 +1,4 @@
-package hdsfhir
+package models
 
 import (
 	"encoding/json"

@@ -1,4 +1,4 @@
-package hdsfhir
+package models
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ type ProcedureSuite struct {
 var _ = Suite(&ProcedureSuite{})
 
 func (suite *ProcedureSuite) SetUpSuite(c *C) {
-	data, err := ioutil.ReadFile("./fixtures/john_peters.json")
+	data, err := ioutil.ReadFile("../fixtures/john_peters.json")
 	util.CheckErr(err)
 	patient := &Patient{}
 	err = json.Unmarshal(data, patient)

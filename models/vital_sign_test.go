@@ -1,4 +1,4 @@
-package hdsfhir
+package models
 
 import (
 	"encoding/json"
@@ -17,7 +17,7 @@ type VitalSignSuite struct {
 var _ = Suite(&VitalSignSuite{})
 
 func (suite *VitalSignSuite) SetUpSuite(c *C) {
-	data, err := ioutil.ReadFile("./fixtures/john_peters.json")
+	data, err := ioutil.ReadFile("../fixtures/john_peters.json")
 	util.CheckErr(err)
 	patient := &Patient{}
 	err = json.Unmarshal(data, patient)
