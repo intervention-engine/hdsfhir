@@ -1,63 +1,53 @@
 package models
 
-import (
-	"encoding/json"
-
-	fhir "github.com/intervention-engine/fhir/models"
-)
+import fhir "github.com/intervention-engine/fhir/models"
 
 type Procedure struct {
 	Entry
-	Description string                     `json:"description"`
-	Values      []ResultValue              `json:"values"`
-	Report      UploadableDiagnosticReport `json:"-"`
+	Description string               `json:"description"`
+	Values      []ResultValue        `json:"values"`
+	report      TemporallyIdentified `json:"-"`
 }
 
-func (self *Procedure) UploadResults(baseURL string) {
-	observations := self.FHIRObservationModels()
-	if len(observations) > 0 {
-		report := fhir.DiagnosticReport{Result: make([]fhir.Reference, len(observations))}
-		for i, observation := range observations {
-			uploadable := UploadableObservation{FHIRObservation: observation}
-			Upload(&uploadable, baseURL+"/Observation")
-			report.Result[i] = fhir.Reference{Reference: uploadable.ServerURL}
+func (p *Procedure) FHIRModels() []interface{} {
+	fhirProcedure := fhir.Procedure{Id: p.GetTempID()}
+	fhirProcedure.Type = p.Codes.FHIRCodeableConcept(p.Description)
+	fhirProcedure.Encounter = p.Patient.MatchingEncounterReference(p.Entry)
+	fhirProcedure.Notes = p.Description
+	fhirProcedure.Date = p.GetFHIRPeriod()
+	fhirProcedure.Subject = p.Patient.FHIRReference()
+
+	if len(p.Values) == 0 {
+		return []interface{}{fhirProcedure}
+	} else {
+		// Create the diagnostic report model with its own ID and slots for results
+		internalReportID := TemporallyIdentified{}
+		fhirReport := fhir.DiagnosticReport{Id: internalReportID.GetTempID()}
+		fhirReport.Result = make([]fhir.Reference, len(p.Values))
+		fhirReport.Subject = p.Patient.FHIRReference()
+
+		// Link the procedure to the report
+		fhirProcedure.Report = []fhir.Reference{*internalReportID.FHIRReference()}
+
+		// Create the observation values
+		fhirObservations := make([]fhir.Observation, len(p.Values))
+		for i := range p.Values {
+			observation := p.Values[i].FHIRModels()[0].(fhir.Observation)
+			observation.Name = p.Codes.FHIRCodeableConcept(p.Description)
+			observation.AppliesPeriod = p.GetFHIRPeriod()
+			observation.Subject = p.Patient.FHIRReference()
+			fhirObservations[i] = observation
+
+			// Link the report results to the observation
+			fhirReport.Result[i] = *p.Values[i].FHIRReference()
 		}
 
-		self.Report = UploadableDiagnosticReport{FHIRDiagnosticReport: report}
-		Upload(&self.Report, baseURL+"/DiagnosticReport")
+		// Return in the correct order so that items w/ dependencies come after what they depend on
+		models := make([]interface{}, 0, len(fhirObservations)+2)
+		for _, fhirObservation := range fhirObservations {
+			models = append(models, fhirObservation)
+		}
+		models = append(models, fhirReport, fhirProcedure)
+		return models
 	}
-}
-
-func (self *Procedure) FHIRModel() fhir.Procedure {
-	fhirProcedure := fhir.Procedure{}
-	fhirProcedure.Type = self.Codes.FHIRCodeableConcept(self.Description)
-	fhirProcedure.Encounter = &fhir.Reference{Reference: self.Patient.MatchingEncounter(self.Entry).ServerURL}
-	fhirProcedure.Notes = self.Description
-	fhirProcedure.Date = self.GetFHIRPeriod()
-	if self.Report.ServerURL != "" {
-		fhirProcedure.Report = append(fhirProcedure.Report, fhir.Reference{Reference: self.Report.ServerURL})
-	}
-
-	fhirProcedure.Subject = &fhir.Reference{Reference: self.Patient.ServerURL}
-	return fhirProcedure
-}
-
-func (self *Procedure) FHIRObservationModels() []fhir.Observation {
-	observations := make([]fhir.Observation, len(self.Values))
-
-	for i, value := range self.Values {
-		observation := value.FHIRModel()
-		observation.Name = self.Codes.FHIRCodeableConcept(self.Description)
-		observation.AppliesPeriod = self.GetFHIRPeriod()
-		observation.Subject = &fhir.Reference{Reference: self.Patient.ServerURL}
-		observations[i] = observation
-	}
-
-	return observations
-}
-
-func (self *Procedure) ToJSON() []byte {
-	fhirProcedure := self.FHIRModel()
-	json, _ := json.Marshal(fhirProcedure)
-	return json
 }

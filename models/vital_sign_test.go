@@ -2,16 +2,15 @@ package models
 
 import (
 	"encoding/json"
+	"io/ioutil"
+
+	fhir "github.com/intervention-engine/fhir/models"
 	"github.com/pebbe/util"
 	. "gopkg.in/check.v1"
-	"io/ioutil"
-	"strconv"
-	"time"
 )
 
 type VitalSignSuite struct {
-	VitalSign *VitalSign
-	Patient   *Patient
+	Patient *Patient
 }
 
 var _ = Suite(&VitalSignSuite{})
@@ -19,32 +18,25 @@ var _ = Suite(&VitalSignSuite{})
 func (suite *VitalSignSuite) SetUpSuite(c *C) {
 	data, err := ioutil.ReadFile("../fixtures/john_peters.json")
 	util.CheckErr(err)
-	patient := &Patient{}
-	err = json.Unmarshal(data, patient)
-	patient.ServerURL = "http://www.example.com/Patient/1"
-	suite.Patient = patient
-	for i, encounter := range patient.Encounters {
-		encounter.ServerURL = "http://www.example.com/Encounter/" + strconv.Itoa(i)
-	}
+
+	suite.Patient = &Patient{}
+	err = json.Unmarshal(data, suite.Patient)
 	util.CheckErr(err)
-	suite.VitalSign = patient.VitalSigns[0]
-	suite.VitalSign.Patient = patient
 }
 
-func (suite *VitalSignSuite) TestToJSON(c *C) {
-	data := suite.VitalSign.ToJSON()
-	c.Assert(data, NotNil)
-}
+func (suite *VitalSignSuite) TestFHIRModels(c *C) {
+	models := suite.Patient.VitalSigns[0].FHIRModels()
+	c.Assert(models, HasLen, 1)
+	c.Assert(models[0], FitsTypeOf, fhir.Observation{})
 
-func (suite *VitalSignSuite) TestFHIRModel(c *C) {
-	data := suite.VitalSign.FHIRModel()
-	c.Assert(data.Subject.Reference, Equals, suite.Patient.ServerURL)
-	c.Assert(data.Name.Text, Equals, suite.VitalSign.Description)
-	c.Assert(data.Encounter.Reference, Equals, "http://www.example.com/Encounter/0")
+	data := models[0].(fhir.Observation)
+	c.Assert(data.Subject, DeepEquals, suite.Patient.FHIRReference())
+	c.Assert(data.Name.Text, Equals, "Laboratory Test, Result: HbA1c Laboratory Test")
+	c.Assert(data.Encounter, DeepEquals, suite.Patient.Encounters[0].FHIRReference())
 	c.Assert(data.ValueQuantity.Value, Equals, float64(8))
 	c.Assert(data.ValueQuantity.Units, Equals, "%")
-	c.Assert(data.AppliesPeriod.Start.Time, Equals, time.Unix(1320149800, 0))
-	c.Assert(data.AppliesPeriod.End.Time, Equals, time.Unix(1320149800, 0))
-	c.Assert(data.Name.Coding[0].Code, Equals, "17856-6")
-	c.Assert(data.Name.Coding[0].System, Equals, "http://loinc.org")
+	c.Assert(data.AppliesPeriod.Start, DeepEquals, NewUnixTime(1320149800).FHIRDateTime())
+	c.Assert(data.AppliesPeriod.End, DeepEquals, NewUnixTime(1320149800).FHIRDateTime())
+	c.Assert(data.Name.Text, Equals, "Laboratory Test, Result: HbA1c Laboratory Test")
+	c.Assert(data.Name.MatchesCode("http://loinc.org", "17856-6"), Equals, true)
 }

@@ -29,4 +29,5 @@ var CodeSystemMap = map[string]string{
 	"ICD-9-PCS":  "http://hl7.org/fhir/sid/icd-9",
 	"ICD-10-PCS": "http://hl7.org/fhir/sid/icd-10",
 	"NDC":        "http://www.fda.gov/Drugs/InformationOnDrugs",
+	"CVX":        "http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=cvx",
 }
