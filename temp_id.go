@@ -1,4 +1,4 @@
-package models
+package hdsfhir
 
 import (
 	"math/rand"

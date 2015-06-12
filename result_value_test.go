@@ -1,4 +1,4 @@
-package models
+package hdsfhir
 
 import (
 	fhir "github.com/intervention-engine/fhir/models"

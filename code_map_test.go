@@ -1,4 +1,4 @@
-package models
+package hdsfhir
 
 import . "gopkg.in/check.v1"
 

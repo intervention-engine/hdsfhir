@@ -1,4 +1,4 @@
-package models
+package hdsfhir
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ type MedicationSuite struct {
 var _ = Suite(&MedicationSuite{})
 
 func (s *MedicationSuite) SetUpSuite(c *C) {
-	data, err := ioutil.ReadFile("../fixtures/john_peters.json")
+	data, err := ioutil.ReadFile("./fixtures/john_peters.json")
 	util.CheckErr(err)
 
 	s.Patient = &Patient{}
