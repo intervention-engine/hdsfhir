@@ -10,7 +10,7 @@ type Procedure struct {
 }
 
 func (p *Procedure) FHIRModels() []interface{} {
-	fhirProcedure := fhir.Procedure{Id: p.GetTempID()}
+	fhirProcedure := &fhir.Procedure{Id: p.GetTempID()}
 	fhirProcedure.Type = p.Codes.FHIRCodeableConcept(p.Description)
 	fhirProcedure.Encounter = p.Patient.MatchingEncounterReference(p.Entry)
 	fhirProcedure.Notes = p.Description
@@ -21,8 +21,8 @@ func (p *Procedure) FHIRModels() []interface{} {
 		return []interface{}{fhirProcedure}
 	} else {
 		// Create the diagnostic report model with its own ID and slots for results
-		internalReportID := TemporallyIdentified{}
-		fhirReport := fhir.DiagnosticReport{Id: internalReportID.GetTempID()}
+		internalReportID := &TemporallyIdentified{}
+		fhirReport := &fhir.DiagnosticReport{Id: internalReportID.GetTempID()}
 		fhirReport.Result = make([]fhir.Reference, len(p.Values))
 		fhirReport.Subject = p.Patient.FHIRReference()
 
@@ -30,9 +30,9 @@ func (p *Procedure) FHIRModels() []interface{} {
 		fhirProcedure.Report = []fhir.Reference{*internalReportID.FHIRReference()}
 
 		// Create the observation values
-		fhirObservations := make([]fhir.Observation, len(p.Values))
+		fhirObservations := make([]*fhir.Observation, len(p.Values))
 		for i := range p.Values {
-			observation := p.Values[i].FHIRModels()[0].(fhir.Observation)
+			observation := p.Values[i].FHIRModels()[0].(*fhir.Observation)
 			observation.Name = p.Codes.FHIRCodeableConcept(p.Description)
 			observation.AppliesPeriod = p.GetFHIRPeriod()
 			observation.Subject = p.Patient.FHIRReference()

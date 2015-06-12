@@ -8,7 +8,7 @@ type Encounter struct {
 }
 
 func (e *Encounter) FHIRModels() []interface{} {
-	fhirEncounter := fhir.Encounter{Id: e.GetTempID()}
+	fhirEncounter := &fhir.Encounter{Id: e.GetTempID()}
 	cc := e.Codes.FHIRCodeableConcept(e.Description)
 	fhirEncounter.Type = []fhir.CodeableConcept{*cc}
 	fhirEncounter.Period = e.GetFHIRPeriod()

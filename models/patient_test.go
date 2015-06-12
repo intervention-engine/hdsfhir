@@ -31,7 +31,7 @@ var _ = Suite(&PatientSuite{})
 
 func (s *PatientSuite) TestPatientFHIRModel(c *C) {
 	model := s.Patient.FHIRModel()
-	c.Assert(model, FitsTypeOf, fhir.Patient{})
+	c.Assert(model, FitsTypeOf, &fhir.Patient{})
 	c.Assert(model.Name, HasLen, 1)
 	c.Assert(model.Name[0].Given, HasLen, 1)
 	c.Assert(model.Name[0].Given[0], Equals, "John")
@@ -48,9 +48,9 @@ func (s *PatientSuite) TestFHIRModels(c *C) {
 
 	// Test all references to the patient to ensure they were populated
 	for i := range models {
-		patientVal := reflect.ValueOf(models[i]).FieldByName("Subject")
+		patientVal := reflect.ValueOf(models[i]).Elem().FieldByName("Subject")
 		if !patientVal.IsValid() {
-			patientVal = reflect.ValueOf(models[i]).FieldByName("Patient")
+			patientVal = reflect.ValueOf(models[i]).Elem().FieldByName("Patient")
 		}
 		if patientVal.IsValid() {
 			c.Assert(patientVal.Interface().(*fhir.Reference).Reference, Equals, "cid:"+patient.Id)
@@ -69,7 +69,7 @@ func (s *PatientSuite) TestFHIRModelReferences(c *C) {
 func getAllReferences(models []interface{}) []*fhir.Reference {
 	refs := make([]*fhir.Reference, 0)
 	for i := range models {
-		s := reflect.ValueOf(models[i])
+		s := reflect.ValueOf(models[i]).Elem()
 		for j := 0; j < s.NumField(); j++ {
 			f := s.Field(j)
 			if f.Type() == reflect.TypeOf(&fhir.Reference{}) && !f.IsNil() {
@@ -86,7 +86,7 @@ func getAllReferences(models []interface{}) []*fhir.Reference {
 
 func isReferenceValid(ref *fhir.Reference, models []interface{}) bool {
 	for i := range models {
-		id := reflect.ValueOf(models[i]).FieldByName("Id").String()
+		id := reflect.ValueOf(models[i]).Elem().FieldByName("Id").String()
 		if ref.Reference == "cid:"+id {
 			return true
 		}

@@ -10,12 +10,12 @@ type VitalSign struct {
 }
 
 func (v *VitalSign) FHIRModels() []interface{} {
-	var fhirObservation fhir.Observation
+	var fhirObservation *fhir.Observation
 	switch {
 	default:
-		fhirObservation = fhir.Observation{}
+		fhirObservation = &fhir.Observation{}
 	case len(v.Values) == 1:
-		fhirObservation = v.Values[0].FHIRModels()[0].(fhir.Observation)
+		fhirObservation = v.Values[0].FHIRModels()[0].(*fhir.Observation)
 	case len(v.Values) > 1:
 		panic("FHIR Observations cannot have more than one value")
 	}

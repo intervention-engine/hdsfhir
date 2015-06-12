@@ -14,7 +14,7 @@ type ResultValue struct {
 }
 
 func (v *ResultValue) FHIRModels() []interface{} {
-	observation := fhir.Observation{Id: v.GetTempID(), Reliability: "ok", Status: "final"}
+	observation := &fhir.Observation{Id: v.GetTempID(), Reliability: "ok", Status: "final"}
 	if v.Physical != nil {
 		if val, err := strconv.ParseFloat(v.Physical.Scalar, 64); err == nil {
 			observation.ValueQuantity = &fhir.Quantity{Units: v.Physical.Unit, Value: val}

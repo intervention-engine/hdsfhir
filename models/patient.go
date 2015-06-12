@@ -31,8 +31,8 @@ func (p *Patient) MatchingEncounterReference(entry Entry) *fhir.Reference {
 	return nil
 }
 
-func (p *Patient) FHIRModel() fhir.Patient {
-	fhirPatient := fhir.Patient{Id: p.GetTempID()}
+func (p *Patient) FHIRModel() *fhir.Patient {
+	fhirPatient := &fhir.Patient{Id: p.GetTempID()}
 	fhirPatient.Name = []fhir.HumanName{fhir.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
 	fhirPatient.Gender = &fhir.CodeableConcept{Coding: []fhir.Coding{fhir.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
 	fhirPatient.BirthDate = p.BirthTime.FHIRDateTime()

@@ -27,8 +27,8 @@ func (s *EncounterSuite) SetUpSuite(c *C) {
 func (s *EncounterSuite) TestFHIRModels(c *C) {
 	models := s.Patient.Encounters[0].FHIRModels()
 	c.Assert(models, HasLen, 1)
-	c.Assert(models[0], FitsTypeOf, fhir.Encounter{})
-	encounter := models[0].(fhir.Encounter)
+	c.Assert(models[0], FitsTypeOf, &fhir.Encounter{})
+	encounter := models[0].(*fhir.Encounter)
 	c.Assert(encounter.Subject, DeepEquals, s.Patient.FHIRReference())
 	c.Assert(encounter.Period.Start, DeepEquals, NewUnixTime(1320148800).FHIRDateTime())
 	c.Assert(encounter.Period.End, DeepEquals, NewUnixTime(1320152400).FHIRDateTime())

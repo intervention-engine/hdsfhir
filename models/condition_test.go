@@ -27,8 +27,8 @@ func (s *ConditionSuite) SetUpSuite(c *C) {
 func (s *ConditionSuite) TestFHIRModels(c *C) {
 	models := s.Patient.Conditions[0].FHIRModels()
 	c.Assert(models, HasLen, 1)
-	c.Assert(models[0], FitsTypeOf, fhir.Condition{})
-	condition := models[0].(fhir.Condition)
+	c.Assert(models[0], FitsTypeOf, &fhir.Condition{})
+	condition := models[0].(*fhir.Condition)
 	c.Assert(condition.Subject, DeepEquals, s.Patient.FHIRReference())
 	c.Assert(condition.OnsetDate, DeepEquals, NewUnixTime(1330603200).FHIRDateTime())
 	c.Assert(condition.AbatementDate, IsNil)

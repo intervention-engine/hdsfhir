@@ -14,8 +14,8 @@ func (s *ResultValueSuite) TestPhysicalQuantityResult(c *C) {
 	result := ResultValue{Physical: &PhysicalQuantityResult{Unit: "mg/dL", Scalar: "130"}}
 	models := result.FHIRModels()
 	c.Assert(models, HasLen, 1)
-	c.Assert(models[0], FitsTypeOf, fhir.Observation{})
-	model := models[0].(fhir.Observation)
+	c.Assert(models[0], FitsTypeOf, &fhir.Observation{})
+	model := models[0].(*fhir.Observation)
 	c.Assert(model.Reliability, Equals, "ok")
 	c.Assert(model.Status, Equals, "final")
 	c.Assert(model.ValueQuantity.Units, Equals, "mg/dL")
@@ -28,8 +28,8 @@ func (s *ResultValueSuite) TestStringResult(c *C) {
 	result := ResultValue{Physical: &PhysicalQuantityResult{Scalar: "positive"}}
 	models := result.FHIRModels()
 	c.Assert(models, HasLen, 1)
-	c.Assert(models[0], FitsTypeOf, fhir.Observation{})
-	model := models[0].(fhir.Observation)
+	c.Assert(models[0], FitsTypeOf, &fhir.Observation{})
+	model := models[0].(*fhir.Observation)
 	c.Assert(model.Reliability, Equals, "ok")
 	c.Assert(model.Status, Equals, "final")
 	c.Assert(model.ValueString, Equals, "positive")
@@ -48,8 +48,8 @@ func (s *ResultValueSuite) TestCodedResult(c *C) {
 	}
 	models := result.FHIRModels()
 	c.Assert(models, HasLen, 1)
-	c.Assert(models[0], FitsTypeOf, fhir.Observation{})
-	model := models[0].(fhir.Observation)
+	c.Assert(models[0], FitsTypeOf, &fhir.Observation{})
+	model := models[0].(*fhir.Observation)
 	c.Assert(model.Reliability, Equals, "ok")
 	c.Assert(model.Status, Equals, "final")
 	c.Assert(model.ValueCodeableConcept.Text, Equals, "PHQ-9 Tool")

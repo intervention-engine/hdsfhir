@@ -29,8 +29,8 @@ func (suite *ProcedureSuite) TestFHIRModels(c *C) {
 
 	c.Assert(procedureModels, HasLen, 3+1+1)
 	for i := 0; i < 3; i++ {
-		c.Assert(procedureModels[i], FitsTypeOf, fhir.Observation{})
-		observation := procedureModels[i].(fhir.Observation)
+		c.Assert(procedureModels[i], FitsTypeOf, &fhir.Observation{})
+		observation := procedureModels[i].(*fhir.Observation)
 		c.Assert(observation.Subject, DeepEquals, suite.Patient.FHIRReference())
 		c.Assert(observation.AppliesPeriod.Start, DeepEquals, NewUnixTime(1320149800).FHIRDateTime())
 		c.Assert(observation.AppliesPeriod.End, DeepEquals, NewUnixTime(1320159800).FHIRDateTime())
@@ -53,17 +53,17 @@ func (suite *ProcedureSuite) TestFHIRModels(c *C) {
 		}
 	}
 
-	c.Assert(procedureModels[3], FitsTypeOf, fhir.DiagnosticReport{})
-	report := procedureModels[3].(fhir.DiagnosticReport)
+	c.Assert(procedureModels[3], FitsTypeOf, &fhir.DiagnosticReport{})
+	report := procedureModels[3].(*fhir.DiagnosticReport)
 	c.Assert(report.Subject, DeepEquals, suite.Patient.FHIRReference())
 	c.Assert(report.Result, HasLen, 3)
 	for i := 0; i < 3; i++ {
-		observation := procedureModels[i].(fhir.Observation)
+		observation := procedureModels[i].(*fhir.Observation)
 		c.Assert(report.Result[i].Reference, Equals, "cid:"+observation.Id)
 	}
 
-	c.Assert(procedureModels[4], FitsTypeOf, fhir.Procedure{})
-	procedure := procedureModels[4].(fhir.Procedure)
+	c.Assert(procedureModels[4], FitsTypeOf, &fhir.Procedure{})
+	procedure := procedureModels[4].(*fhir.Procedure)
 	c.Assert(procedure.Subject, DeepEquals, suite.Patient.FHIRReference())
 	c.Assert(procedure.Type.Text, Equals, "Procedure, Result: Clinical Staging Procedure")
 	c.Assert(procedure.Type.MatchesCode("http://snomed.info/sct", "116783008"), Equals, true)
@@ -76,9 +76,9 @@ func (suite *ProcedureSuite) TestFHIRModels(c *C) {
 
 	procedureModels = suite.Patient.Procedures[1].FHIRModels()
 	c.Assert(procedureModels, HasLen, 1)
-	c.Assert(procedureModels[0], FitsTypeOf, fhir.Procedure{})
+	c.Assert(procedureModels[0], FitsTypeOf, &fhir.Procedure{})
 
-	procedure = procedureModels[0].(fhir.Procedure)
+	procedure = procedureModels[0].(*fhir.Procedure)
 	c.Assert(procedure.Subject, DeepEquals, suite.Patient.FHIRReference())
 	c.Assert(procedure.Type.Text, Equals, "Procedure, Performed: Hospital measures-CABG")
 	c.Assert(procedure.Type.MatchesCode("http://hl7.org/fhir/sid/icd-9", "36.10"), Equals, true)

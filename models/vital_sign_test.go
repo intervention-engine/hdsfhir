@@ -27,9 +27,9 @@ func (suite *VitalSignSuite) SetUpSuite(c *C) {
 func (suite *VitalSignSuite) TestFHIRModels(c *C) {
 	models := suite.Patient.VitalSigns[0].FHIRModels()
 	c.Assert(models, HasLen, 1)
-	c.Assert(models[0], FitsTypeOf, fhir.Observation{})
+	c.Assert(models[0], FitsTypeOf, &fhir.Observation{})
 
-	data := models[0].(fhir.Observation)
+	data := models[0].(*fhir.Observation)
 	c.Assert(data.Subject, DeepEquals, suite.Patient.FHIRReference())
 	c.Assert(data.Name.Text, Equals, "Laboratory Test, Result: HbA1c Laboratory Test")
 	c.Assert(data.Encounter, DeepEquals, suite.Patient.Encounters[0].FHIRReference())
