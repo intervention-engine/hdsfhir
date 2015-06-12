@@ -2,9 +2,10 @@ HDS to FHIR
 ===============================
 
 This project converts JSON data for a patient in the structure used by
-[health-data-standards](https://github.com/projectcypress/health-data-standards) and converts
-it into the JSON format used by [FHIR](http://hl7.org/implement/standards/fhir/). It also provides
-functionality for uploading the data to a FHIR compliant server using the FHIR HTTP interface.
+[health-data-standards](https://github.com/projectcypress/health-data-standards)
+into the [HL7 FHIR](http://hl7.org/implement/standards/fhir/) models defined
+in the Intervention Engine [fhir](https://github.com/interventionengine/fhir)
+project.
 
 Environment
 -----------
@@ -21,12 +22,18 @@ To get all of the dependencies for this project, run:
 
     go get
 
-In this directory.
+in this directory.
+
+To run all of the tests for this project, run:
+
+    go test ./...
+
+in this directory.
 
 License
 -------
 
-Copyright 2014 The MITRE Corporation
+Copyright 2015 The MITRE Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
