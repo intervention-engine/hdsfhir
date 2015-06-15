@@ -17,37 +17,30 @@ func (p *Procedure) FHIRModels() []interface{} {
 	fhirProcedure.Date = p.GetFHIRPeriod()
 	fhirProcedure.Subject = p.Patient.FHIRReference()
 
-	if len(p.Values) == 0 {
-		return []interface{}{fhirProcedure}
-	} else {
+	models := []interface{}{fhirProcedure}
+	if len(p.Values) > 0 {
 		// Create the diagnostic report model with its own ID and slots for results
 		internalReportID := &TemporallyIdentified{}
 		fhirReport := &fhir.DiagnosticReport{Id: internalReportID.GetTempID()}
 		fhirReport.Result = make([]fhir.Reference, len(p.Values))
 		fhirReport.Subject = p.Patient.FHIRReference()
+		models = append(models, fhirReport)
 
 		// Link the procedure to the report
 		fhirProcedure.Report = []fhir.Reference{*internalReportID.FHIRReference()}
 
 		// Create the observation values
-		fhirObservations := make([]*fhir.Observation, len(p.Values))
 		for i := range p.Values {
 			observation := p.Values[i].FHIRModels()[0].(*fhir.Observation)
 			observation.Name = p.Codes.FHIRCodeableConcept(p.Description)
 			observation.AppliesPeriod = p.GetFHIRPeriod()
 			observation.Subject = p.Patient.FHIRReference()
-			fhirObservations[i] = observation
+			models = append(models, observation)
 
 			// Link the report results to the observation
 			fhirReport.Result[i] = *p.Values[i].FHIRReference()
 		}
-
-		// Return in the correct order so that items w/ dependencies come after what they depend on
-		models := make([]interface{}, 0, len(fhirObservations)+2)
-		for _, fhirObservation := range fhirObservations {
-			models = append(models, fhirObservation)
-		}
-		models = append(models, fhirReport, fhirProcedure)
-		return models
 	}
+
+	return models
 }
