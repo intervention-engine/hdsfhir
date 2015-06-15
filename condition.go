@@ -1,29 +1,20 @@
 package hdsfhir
 
-import (
-	"encoding/json"
-	"github.com/intervention-engine/fhir/models"
-)
+import fhir "github.com/intervention-engine/fhir/models"
 
 type Condition struct {
 	Entry
-	Severity map[string][]string `json:"severity"`
+	Severity CodeMap `json:"severity"`
 }
 
-func (c *Condition) ToFhirModel() models.Condition {
-	fhirCondition := models.Condition{}
-	fhirCondition.Code = c.ConvertCodingToFHIR()
-	fhirCondition.Code.Text = c.Description
-	fhirCondition.OnsetDate = &models.FHIRDateTime{Time: c.StartTimestamp(), Precision: models.Timestamp}
-	fhirCondition.Subject = &models.Reference{Reference: c.Patient.ServerURL}
-
+func (c *Condition) FHIRModels() []interface{} {
+	fhirCondition := &fhir.Condition{Id: c.GetTempID()}
+	fhirCondition.Code = c.Codes.FHIRCodeableConcept(c.Description)
+	fhirCondition.OnsetDate = c.StartTime.FHIRDateTime()
+	fhirCondition.Subject = c.Patient.FHIRReference()
 	if c.EndTime != 0 {
-		fhirCondition.AbatementDate = &models.FHIRDateTime{Time: c.EndTimestamp(), Precision: models.Timestamp}
+		fhirCondition.AbatementDate = c.EndTime.FHIRDateTime()
 	}
-	return fhirCondition
-}
 
-func (c *Condition) ToJSON() []byte {
-	json, _ := json.Marshal(c.ToFhirModel())
-	return json
+	return []interface{}{fhirCondition}
 }

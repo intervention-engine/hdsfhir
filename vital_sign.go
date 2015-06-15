@@ -1,33 +1,28 @@
 package hdsfhir
 
-import (
-	"encoding/json"
-
-	"github.com/intervention-engine/fhir/models"
-)
+import fhir "github.com/intervention-engine/fhir/models"
 
 type VitalSign struct {
 	Entry
-	Description    string `json:"description"`
-	Interpretation string `json:"interpretation"`
-	ThingWithResults
+	Description    string        `json:"description"`
+	Interpretation string        `json:"interpretation"`
+	Values         []ResultValue `json:"values"`
 }
 
-func (self *VitalSign) ToFhirModel() models.Observation {
-	fhirObservation := models.Observation{Reliability: "ok", Status: "final"}
-	fhirObservation.Name = self.ConvertCodingToFHIR()
-	fhirObservation.Name.Text = self.Description
-	fhirObservation.Encounter = &models.Reference{Reference: self.Patient.MatchingEncounter(self.Entry).ServerURL}
+func (v *VitalSign) FHIRModels() []interface{} {
+	var fhirObservation *fhir.Observation
+	switch {
+	default:
+		fhirObservation = &fhir.Observation{}
+	case len(v.Values) == 1:
+		fhirObservation = v.Values[0].FHIRModels()[0].(*fhir.Observation)
+	case len(v.Values) > 1:
+		panic("FHIR Observations cannot have more than one value")
+	}
+	fhirObservation.Name = v.Codes.FHIRCodeableConcept(v.Description)
+	fhirObservation.Encounter = v.Patient.MatchingEncounterReference(v.Entry)
+	fhirObservation.AppliesPeriod = v.GetFHIRPeriod()
+	fhirObservation.Subject = v.Patient.FHIRReference()
 
-	fhirObservation.AppliesPeriod = self.AsFHIRPeriod()
-	self.HandleValues(&fhirObservation)
-
-	fhirObservation.Subject = &models.Reference{Reference: self.Patient.ServerURL}
-	return fhirObservation
-}
-
-func (self *VitalSign) ToJSON() []byte {
-	fhirObservation := self.ToFhirModel()
-	json, _ := json.Marshal(fhirObservation)
-	return json
+	return []interface{}{fhirObservation}
 }

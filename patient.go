@@ -2,82 +2,88 @@ package hdsfhir
 
 import (
 	"encoding/json"
-	"time"
 
-	"github.com/intervention-engine/fhir/models"
+	fhir "github.com/intervention-engine/fhir/models"
 )
 
 type Patient struct {
-	FirstName     string        `json:"first"`
-	LastName      string        `json:"last"`
-	UnixBirthTime int64         `json:"birthdate"`
-	Gender        string        `json:"gender"`
-	Encounters    []*Encounter  `json:"encounters"`
-	Conditions    []*Condition  `json:"conditions"`
-	VitalSigns    []*VitalSign  `json:"vital_signs"`
-	Procedures    []*Procedure  `json:"procedures"`
-	Medications   []*Medication `json:"medications"`
-	ServerURL     string        `json:"-"`
+	TemporallyIdentified
+	FirstName   string        `json:"first"`
+	LastName    string        `json:"last"`
+	BirthTime   UnixTime      `json:"birthdate"`
+	Gender      string        `json:"gender"`
+	Encounters  []*Encounter  `json:"encounters"`
+	Conditions  []*Condition  `json:"conditions"`
+	VitalSigns  []*VitalSign  `json:"vital_signs"`
+	Procedures  []*Procedure  `json:"procedures"`
+	Medications []*Medication `json:"medications"`
 }
 
-// TODO: :allergies, :care_goals, :immunizations, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
+// TODO: :allergies, :care_goals, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
 
-func (p *Patient) SetServerURL(url string) {
-	p.ServerURL = url
-}
-
-func (p *Patient) BirthTime() time.Time {
-	return time.Unix(p.UnixBirthTime, 0)
-}
-
-func (p *Patient) PostToFHIRServer(baseURL string) {
-	Upload(p, baseURL+"/Patient")
+func (p *Patient) MatchingEncounterReference(entry Entry) *fhir.Reference {
 	for _, encounter := range p.Encounters {
-		encounter.Patient = p
-		Upload(encounter, baseURL+"/Encounter")
+		// TODO: Overlaps may not be the right thing here... maybe closest?
+		if encounter.StartTime <= entry.EndTime && encounter.EndTime >= entry.StartTime {
+			return encounter.FHIRReference()
+		}
+	}
+	return nil
+}
+
+func (p *Patient) FHIRModel() *fhir.Patient {
+	fhirPatient := &fhir.Patient{Id: p.GetTempID()}
+	fhirPatient.Name = []fhir.HumanName{fhir.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
+	fhirPatient.Gender = &fhir.CodeableConcept{Coding: []fhir.Coding{fhir.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
+	fhirPatient.BirthDate = p.BirthTime.FHIRDateTime()
+	return fhirPatient
+}
+
+func (p *Patient) FHIRModels() []interface{} {
+	models := make([]interface{}, 0)
+	models = append(models, p.FHIRModel())
+	for _, encounter := range p.Encounters {
+		models = append(models, encounter.FHIRModels()...)
 	}
 	for _, condition := range p.Conditions {
-		condition.Patient = p
-		Upload(condition, baseURL+"/Condition")
+		models = append(models, condition.FHIRModels()...)
 	}
 	for _, observation := range p.VitalSigns {
-		// find matching encounter
-		observation.Patient = p
-		Upload(observation, baseURL+"/Observation")
+		models = append(models, observation.FHIRModels()...)
 	}
-
 	for _, procedure := range p.Procedures {
-		procedure.Patient = p
-		procedure.UploadResults(baseURL)
-		Upload(procedure, baseURL+"/Procedure")
-
+		models = append(models, procedure.FHIRModels()...)
+	}
+	for _, medication := range p.Medications {
+		models = append(models, medication.FHIRModels()...)
 	}
 
-	for _, med := range p.Medications {
-		_, cvxExists := med.Codes["CVX"] // Ignores medications that are coded with CVX
-		if cvxExists != true {
-			med.Patient = p
-			med.BaseUrl = baseURL
-			Upload(med, baseURL+"/MedicationStatement")
-		}
-	}
+	return models
 }
 
-func (self *Patient) MatchingEncounter(entry Entry) Encounter {
-	for _, encounter := range self.Encounters {
-		// TODO: Overlaps may not be the right thing here... maybe closest?
-		if encounter.Overlaps(entry) {
-			return *encounter
-		}
-	}
-	return Encounter{}
-}
+// The "patient" sub-type is needed to avoid infinite recursion in UnmarshalJSON
+type patient Patient
 
-func (p *Patient) ToJSON() []byte {
-	fhirPatient := &models.Patient{}
-	fhirPatient.Name = []models.HumanName{models.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
-	fhirPatient.Gender = &models.CodeableConcept{Coding: []models.Coding{models.Coding{System: "http://hl7.org/fhir/v3/AdministrativeGender", Code: p.Gender}}}
-	fhirPatient.BirthDate = &models.FHIRDateTime{Time: p.BirthTime(), Precision: models.Precision("date")}
-	json, _ := json.Marshal(fhirPatient)
-	return json
+func (p *Patient) UnmarshalJSON(data []byte) (err error) {
+	p2 := patient{}
+	if err = json.Unmarshal(data, &p2); err == nil {
+		*p = Patient(p2)
+		for _, encounter := range p.Encounters {
+			encounter.Patient = p
+		}
+		for _, condition := range p.Conditions {
+			condition.Patient = p
+		}
+		for _, observation := range p.VitalSigns {
+			observation.Patient = p
+		}
+		for _, procedure := range p.Procedures {
+			procedure.Patient = p
+		}
+		for _, medication := range p.Medications {
+			medication.Patient = p
+		}
+
+	}
+	return
 }
