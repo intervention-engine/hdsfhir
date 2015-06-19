@@ -37,9 +37,9 @@ func (s *MedicationSuite) TestMedicationFHIRModels(c *C) {
 	c.Assert(models[1], FitsTypeOf, &fhir.MedicationStatement{})
 	statement := models[1].(*fhir.MedicationStatement)
 	c.Assert(statement.Patient, DeepEquals, s.Patient.FHIRReference())
-	c.Assert(statement.Medication.Reference, Equals, "cid:"+medication.Id)
-	c.Assert(statement.WhenGiven.Start, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
-	c.Assert(statement.WhenGiven.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
+	c.Assert(statement.MedicationReference.Reference, Equals, "cid:"+medication.Id)
+	c.Assert(statement.EffectivePeriod.Start, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
+	c.Assert(statement.EffectivePeriod.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
 }
 
 func (s *MedicationSuite) TestImmunizationFHIRModels(c *C) {
@@ -47,7 +47,7 @@ func (s *MedicationSuite) TestImmunizationFHIRModels(c *C) {
 	c.Assert(models, HasLen, 1)
 	c.Assert(models[0], FitsTypeOf, &fhir.Immunization{})
 	immunization := models[0].(*fhir.Immunization)
-	c.Assert(immunization.Subject, DeepEquals, s.Patient.FHIRReference())
+	c.Assert(immunization.Patient, DeepEquals, s.Patient.FHIRReference())
 	c.Assert(immunization.Date, DeepEquals, NewUnixTime(1313409600).FHIRDateTime())
 	c.Assert(immunization.VaccineType.Text, Equals, "Medication, Administered: Pneumococcal Vaccine (Code List: 2.16.840.1.113883.3.464.1003.110.12.1027)")
 	c.Assert(immunization.VaccineType.MatchesCode("http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=cvx", "33"), Equals, true)

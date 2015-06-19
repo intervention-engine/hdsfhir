@@ -19,7 +19,7 @@ func (s *ResultValueSuite) TestPhysicalQuantityResult(c *C) {
 	c.Assert(model.Reliability, Equals, "ok")
 	c.Assert(model.Status, Equals, "final")
 	c.Assert(model.ValueQuantity.Units, Equals, "mg/dL")
-	c.Assert(model.ValueQuantity.Value, Equals, float64(130))
+	c.Assert(*model.ValueQuantity.Value, Equals, float64(130))
 	c.Assert(model.ValueString, Equals, "")
 	c.Assert(model.ValueCodeableConcept, IsNil)
 }

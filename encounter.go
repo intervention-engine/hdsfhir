@@ -12,7 +12,7 @@ func (e *Encounter) FHIRModels() []interface{} {
 	cc := e.Codes.FHIRCodeableConcept(e.Description)
 	fhirEncounter.Type = []fhir.CodeableConcept{*cc}
 	fhirEncounter.Period = e.GetFHIRPeriod()
-	fhirEncounter.Subject = e.Patient.FHIRReference()
+	fhirEncounter.Patient = e.Patient.FHIRReference()
 
 	return []interface{}{fhirEncounter}
 }
