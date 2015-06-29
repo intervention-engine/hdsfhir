@@ -44,7 +44,7 @@ func (s *PatientSuite) TestPatientFHIRModel(c *C) {
 func (s *PatientSuite) TestFHIRModels(c *C) {
 	models := s.Patient.FHIRModels()
 	patient := s.Patient.FHIRModel()
-	c.Assert(models, HasLen, 20)
+	c.Assert(models, HasLen, 19)
 
 	// Test all references to the patient to ensure they were populated
 	for i := range models {

@@ -18,17 +18,12 @@ func (m *Medication) FHIRModels() []interface{} {
 
 		return []interface{}{fhirImmunization}
 	} else {
-		internalMedID := &TemporallyIdentified{}
-		fhirMedication := &fhir.Medication{Id: internalMedID.GetTempID()}
-		fhirMedication.Code = m.Codes.FHIRCodeableConcept(m.Description)
-		fhirMedication.Name = m.Description
-
 		fhirMedicationStatement := &fhir.MedicationStatement{Id: m.GetTempID()}
 		fhirMedicationStatement.EffectivePeriod = m.GetFHIRPeriod()
+		fhirMedicationStatement.MedicationCodeableConcept = m.Codes.FHIRCodeableConcept(m.Description)
 		fhirMedicationStatement.Patient = m.Patient.FHIRReference()
-		fhirMedicationStatement.MedicationReference = internalMedID.FHIRReference()
 		// Ignoring route
 
-		return []interface{}{fhirMedication, fhirMedicationStatement}
+		return []interface{}{fhirMedicationStatement}
 	}
 }

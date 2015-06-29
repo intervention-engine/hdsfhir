@@ -26,20 +26,15 @@ func (s *MedicationSuite) SetUpSuite(c *C) {
 
 func (s *MedicationSuite) TestMedicationFHIRModels(c *C) {
 	models := s.Patient.Medications[0].FHIRModels()
-	c.Assert(models, HasLen, 2)
+	c.Assert(models, HasLen, 1)
 
-	c.Assert(models[0], FitsTypeOf, &fhir.Medication{})
-	medication := models[0].(*fhir.Medication)
-	c.Assert(medication.Name, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
-	c.Assert(medication.Code.Text, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
-	c.Assert(medication.Code.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
-
-	c.Assert(models[1], FitsTypeOf, &fhir.MedicationStatement{})
-	statement := models[1].(*fhir.MedicationStatement)
-	c.Assert(statement.Patient, DeepEquals, s.Patient.FHIRReference())
-	c.Assert(statement.MedicationReference.Reference, Equals, "cid:"+medication.Id)
-	c.Assert(statement.EffectivePeriod.Start, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
-	c.Assert(statement.EffectivePeriod.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
+	c.Assert(models[0], FitsTypeOf, &fhir.MedicationStatement{})
+	medication := models[0].(*fhir.MedicationStatement)
+	c.Assert(medication.Patient, DeepEquals, s.Patient.FHIRReference())
+	c.Assert(medication.MedicationCodeableConcept.Text, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
+	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
+	c.Assert(medication.EffectivePeriod.Start, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
+	c.Assert(medication.EffectivePeriod.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
 }
 
 func (s *MedicationSuite) TestImmunizationFHIRModels(c *C) {
