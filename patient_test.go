@@ -37,8 +37,8 @@ func (s *PatientSuite) TestPatientFHIRModel(c *C) {
 	c.Assert(model.Name[0].Given[0], Equals, "John")
 	c.Assert(model.Name[0].Family, HasLen, 1)
 	c.Assert(model.Name[0].Family[0], Equals, "Peters")
-	c.Assert(model.Gender.MatchesCode("http://hl7.org/fhir/v3/AdministrativeGender", "M"), Equals, true)
-	c.Assert(model.BirthDate, DeepEquals, NewUnixTime(665420400).FHIRDateTime())
+	c.Assert(model.Gender, Equals, "male")
+	c.Assert(model.BirthDate, DeepEquals, NewUnixTime(665420400).FHIRDate())
 }
 
 func (s *PatientSuite) TestFHIRModels(c *C) {

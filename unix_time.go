@@ -20,3 +20,7 @@ func (t *UnixTime) Time() time.Time {
 func (t *UnixTime) FHIRDateTime() *fhir.FHIRDateTime {
 	return &fhir.FHIRDateTime{Time: t.Time(), Precision: fhir.Timestamp}
 }
+
+func (t *UnixTime) FHIRDate() *fhir.FHIRDateTime {
+	return &fhir.FHIRDateTime{Time: t.Time(), Precision: fhir.Date}
+}
