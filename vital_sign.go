@@ -19,9 +19,9 @@ func (v *VitalSign) FHIRModels() []interface{} {
 	case len(v.Values) > 1:
 		panic("FHIR Observations cannot have more than one value")
 	}
-	fhirObservation.Name = v.Codes.FHIRCodeableConcept(v.Description)
+	fhirObservation.Code = v.Codes.FHIRCodeableConcept(v.Description)
 	fhirObservation.Encounter = v.Patient.MatchingEncounterReference(v.Entry)
-	fhirObservation.AppliesPeriod = v.GetFHIRPeriod()
+	fhirObservation.EffectivePeriod = v.GetFHIRPeriod()
 	fhirObservation.Subject = v.Patient.FHIRReference()
 
 	return []interface{}{fhirObservation}

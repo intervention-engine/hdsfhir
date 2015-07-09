@@ -13,22 +13,17 @@ func (m *Medication) FHIRModels() []interface{} {
 		fhirImmunization := &fhir.Immunization{Id: m.GetTempID()}
 		fhirImmunization.Date = m.StartTime.FHIRDateTime()
 		fhirImmunization.VaccineType = m.Codes.FHIRCodeableConcept(m.Description)
-		fhirImmunization.Subject = m.Patient.FHIRReference()
+		fhirImmunization.Patient = m.Patient.FHIRReference()
 		// Ignoring Route
 
 		return []interface{}{fhirImmunization}
 	} else {
-		internalMedID := &TemporallyIdentified{}
-		fhirMedication := &fhir.Medication{Id: internalMedID.GetTempID()}
-		fhirMedication.Code = m.Codes.FHIRCodeableConcept(m.Description)
-		fhirMedication.Name = m.Description
-
 		fhirMedicationStatement := &fhir.MedicationStatement{Id: m.GetTempID()}
-		fhirMedicationStatement.WhenGiven = m.GetFHIRPeriod()
+		fhirMedicationStatement.EffectivePeriod = m.GetFHIRPeriod()
+		fhirMedicationStatement.MedicationCodeableConcept = m.Codes.FHIRCodeableConcept(m.Description)
 		fhirMedicationStatement.Patient = m.Patient.FHIRReference()
-		fhirMedicationStatement.Medication = internalMedID.FHIRReference()
 		// Ignoring route
 
-		return []interface{}{fhirMedication, fhirMedicationStatement}
+		return []interface{}{fhirMedicationStatement}
 	}
 }

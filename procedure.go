@@ -14,8 +14,8 @@ func (p *Procedure) FHIRModels() []interface{} {
 	fhirProcedure.Type = p.Codes.FHIRCodeableConcept(p.Description)
 	fhirProcedure.Encounter = p.Patient.MatchingEncounterReference(p.Entry)
 	fhirProcedure.Notes = p.Description
-	fhirProcedure.Date = p.GetFHIRPeriod()
-	fhirProcedure.Subject = p.Patient.FHIRReference()
+	fhirProcedure.PerformedPeriod = p.GetFHIRPeriod()
+	fhirProcedure.Patient = p.Patient.FHIRReference()
 
 	models := []interface{}{fhirProcedure}
 	if len(p.Values) > 0 {
@@ -32,8 +32,8 @@ func (p *Procedure) FHIRModels() []interface{} {
 		// Create the observation values
 		for i := range p.Values {
 			observation := p.Values[i].FHIRModels()[0].(*fhir.Observation)
-			observation.Name = p.Codes.FHIRCodeableConcept(p.Description)
-			observation.AppliesPeriod = p.GetFHIRPeriod()
+			observation.Code = p.Codes.FHIRCodeableConcept(p.Description)
+			observation.EffectivePeriod = p.GetFHIRPeriod()
 			observation.Subject = p.Patient.FHIRReference()
 			models = append(models, observation)
 

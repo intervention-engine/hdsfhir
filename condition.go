@@ -10,10 +10,10 @@ type Condition struct {
 func (c *Condition) FHIRModels() []interface{} {
 	fhirCondition := &fhir.Condition{Id: c.GetTempID()}
 	fhirCondition.Code = c.Codes.FHIRCodeableConcept(c.Description)
-	fhirCondition.OnsetDate = c.StartTime.FHIRDateTime()
-	fhirCondition.Subject = c.Patient.FHIRReference()
+	fhirCondition.OnsetDateTime = c.StartTime.FHIRDateTime()
+	fhirCondition.Patient = c.Patient.FHIRReference()
 	if c.EndTime != 0 {
-		fhirCondition.AbatementDate = c.EndTime.FHIRDateTime()
+		fhirCondition.AbatementDate = c.EndTime.FHIRDate()
 	}
 
 	return []interface{}{fhirCondition}

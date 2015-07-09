@@ -22,3 +22,9 @@ func (s *UnixTimeSuite) TestFHIRDateTime(c *C) {
 	c.Assert(t.FHIRDateTime().Precision, Equals, fhir.Precision(fhir.Timestamp))
 	c.Assert(t.FHIRDateTime().Time.UTC(), DeepEquals, time.Date(2015, time.October, 21, 20, 29, 0, 0, time.UTC))
 }
+
+func (s *UnixTimeSuite) TestFHIRDate(c *C) {
+	t := NewUnixTime(1445459340)
+	c.Assert(t.FHIRDate().Precision, Equals, fhir.Precision(fhir.Date))
+	c.Assert(t.FHIRDate().Time.UTC(), DeepEquals, time.Date(2015, time.October, 21, 20, 29, 0, 0, time.UTC))
+}
