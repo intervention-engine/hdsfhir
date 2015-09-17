@@ -44,6 +44,6 @@ func (s *MedicationSuite) TestImmunizationFHIRModels(c *C) {
 	immunization := models[0].(*fhir.Immunization)
 	c.Assert(immunization.Patient, DeepEquals, s.Patient.FHIRReference())
 	c.Assert(immunization.Date, DeepEquals, NewUnixTime(1313409600).FHIRDateTime())
-	c.Assert(immunization.VaccineType.Text, Equals, "Medication, Administered: Pneumococcal Vaccine (Code List: 2.16.840.1.113883.3.464.1003.110.12.1027)")
-	c.Assert(immunization.VaccineType.MatchesCode("http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=cvx", "33"), Equals, true)
+	c.Assert(immunization.VaccineCode.Text, Equals, "Medication, Administered: Pneumococcal Vaccine (Code List: 2.16.840.1.113883.3.464.1003.110.12.1027)")
+	c.Assert(immunization.VaccineCode.MatchesCode("http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=cvx", "33"), Equals, true)
 }

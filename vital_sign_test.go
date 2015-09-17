@@ -35,7 +35,7 @@ func (suite *VitalSignSuite) TestFHIRModels(c *C) {
 	c.Assert(data.Code.MatchesCode("http://loinc.org", "17856-6"), Equals, true)
 	c.Assert(data.Encounter, DeepEquals, suite.Patient.Encounters[0].FHIRReference())
 	c.Assert(*data.ValueQuantity.Value, Equals, float64(8))
-	c.Assert(data.ValueQuantity.Units, Equals, "%")
+	c.Assert(data.ValueQuantity.Unit, Equals, "%")
 	c.Assert(data.EffectivePeriod.Start, DeepEquals, NewUnixTime(1320149800).FHIRDateTime())
 	c.Assert(data.EffectivePeriod.End, DeepEquals, NewUnixTime(1320149800).FHIRDateTime())
 }

@@ -14,10 +14,10 @@ type ResultValue struct {
 }
 
 func (v *ResultValue) FHIRModels() []interface{} {
-	observation := &fhir.Observation{Id: v.GetTempID(), Reliability: "ok", Status: "final"}
+	observation := &fhir.Observation{Id: v.GetTempID(), Status: "final"}
 	if v.Physical != nil {
 		if val, err := strconv.ParseFloat(v.Physical.Scalar, 64); err == nil {
-			observation.ValueQuantity = &fhir.Quantity{Units: v.Physical.Unit, Value: &val}
+			observation.ValueQuantity = &fhir.Quantity{Unit: v.Physical.Unit, Value: &val}
 		} else {
 			observation.ValueString = v.Physical.Scalar
 		}
@@ -57,7 +57,7 @@ func (v *ResultValue) UnmarshalJSON(data []byte) (err error) {
 
 // Result Types
 type PhysicalQuantityResult struct {
-	Unit   string `json:"units"`
+	Unit   string `json:"unit"`
 	Scalar string `json:"scalar"`
 }
 
