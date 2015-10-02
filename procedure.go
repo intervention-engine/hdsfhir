@@ -11,11 +11,11 @@ type Procedure struct {
 
 func (p *Procedure) FHIRModels() []interface{} {
 	fhirProcedure := &fhir.Procedure{Id: p.GetTempID()}
-	fhirProcedure.Type = p.Codes.FHIRCodeableConcept(p.Description)
+	fhirProcedure.Code = p.Codes.FHIRCodeableConcept(p.Description)
 	fhirProcedure.Encounter = p.Patient.MatchingEncounterReference(p.Entry)
-	fhirProcedure.Notes = p.Description
+	fhirProcedure.Notes = []fhir.Annotation{{Text: p.Description}}
 	fhirProcedure.PerformedPeriod = p.GetFHIRPeriod()
-	fhirProcedure.Patient = p.Patient.FHIRReference()
+	fhirProcedure.Subject = p.Patient.FHIRReference()
 
 	models := []interface{}{fhirProcedure}
 	if len(p.Values) > 0 {

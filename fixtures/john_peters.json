@@ -378,7 +378,7 @@
       "values": [
         {
           "scalar": "8",
-          "units": "%",
+          "unit": "%",
           "_type": "PhysicalQuantityResultValue"
         }
       ],

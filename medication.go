@@ -12,7 +12,7 @@ func (m *Medication) FHIRModels() []interface{} {
 	if isImmunization {
 		fhirImmunization := &fhir.Immunization{Id: m.GetTempID()}
 		fhirImmunization.Date = m.StartTime.FHIRDateTime()
-		fhirImmunization.VaccineType = m.Codes.FHIRCodeableConcept(m.Description)
+		fhirImmunization.VaccineCode = m.Codes.FHIRCodeableConcept(m.Description)
 		fhirImmunization.Patient = m.Patient.FHIRReference()
 		// Ignoring Route
 

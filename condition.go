@@ -13,7 +13,7 @@ func (c *Condition) FHIRModels() []interface{} {
 	fhirCondition.OnsetDateTime = c.StartTime.FHIRDateTime()
 	fhirCondition.Patient = c.Patient.FHIRReference()
 	if c.EndTime != 0 {
-		fhirCondition.AbatementDate = c.EndTime.FHIRDate()
+		fhirCondition.AbatementDateTime = c.EndTime.FHIRDateTime()
 	}
 
 	return []interface{}{fhirCondition}

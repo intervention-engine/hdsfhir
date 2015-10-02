@@ -31,7 +31,7 @@ func (s *ConditionSuite) TestFHIRModels(c *C) {
 	condition := models[0].(*fhir.Condition)
 	c.Assert(condition.Patient, DeepEquals, s.Patient.FHIRReference())
 	c.Assert(condition.OnsetDateTime, DeepEquals, NewUnixTime(1330603200).FHIRDateTime())
-	c.Assert(condition.AbatementDate, IsNil)
+	c.Assert(condition.AbatementDateTime, IsNil)
 	c.Assert(condition.Code.Text, Equals, "Diagnosis, Active: Heart Failure (Code List: 2.16.840.1.113883.3.526.3.376)")
 	c.Assert(condition.Code.MatchesCode("http://snomed.info/sct", "10091002"), Equals, true)
 	c.Assert(condition.Code.MatchesCode("http://hl7.org/fhir/sid/icd-9", "428.0"), Equals, true)
