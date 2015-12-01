@@ -8,15 +8,16 @@ import (
 
 type Patient struct {
 	TemporallyIdentified
-	FirstName   string        `json:"first"`
-	LastName    string        `json:"last"`
-	BirthTime   UnixTime      `json:"birthdate"`
-	Gender      string        `json:"gender"`
-	Encounters  []*Encounter  `json:"encounters"`
-	Conditions  []*Condition  `json:"conditions"`
-	VitalSigns  []*VitalSign  `json:"vital_signs"`
-	Procedures  []*Procedure  `json:"procedures"`
-	Medications []*Medication `json:"medications"`
+	FirstName     string          `json:"first"`
+	LastName      string          `json:"last"`
+	BirthTime     UnixTime        `json:"birthdate"`
+	Gender        string          `json:"gender"`
+	Encounters    []*Encounter    `json:"encounters"`
+	Conditions    []*Condition    `json:"conditions"`
+	VitalSigns    []*VitalSign    `json:"vital_signs"`
+	Procedures    []*Procedure    `json:"procedures"`
+	Medications   []*Medication   `json:"medications"`
+	Immunizations []*Immunization `json:"immunizations"`
 }
 
 // TODO: :allergies, :care_goals, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
