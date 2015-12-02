@@ -1,0 +1,219 @@
+{
+
+"procedureResults": {
+    "codes": {
+      "SNOMED-CT": [
+        "116783008"
+      ]
+    },
+    "description": "Procedure, Result: Clinical Staging Procedure",
+    "end_time": 1320159800,
+    "incisionTime": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.63",
+    "ordinality": null,
+    "performer_id": null,
+    "reason": null,
+    "site": null,
+    "source": null,
+    "specifics": null,
+    "start_time": 1320149800,
+    "status_code": {
+      "HL7 ActStatus": [
+        null
+      ]
+    },
+    "time": null,
+    "values": [
+      {
+        "codes": {
+          "SNOMED-CT": [
+            "433581000124101"
+          ]
+        },
+        "description": "Colon Distant Metastasis Status M0",
+        "_type": "CodedResultValue"
+      },
+      {
+        "codes": {
+          "SNOMED-CT": [
+            "433571000124104"
+          ]
+        },
+        "description": "Colon Cancer Regional Lymph Node Status N2b",
+        "_type": "CodedResultValue"
+      },
+      {
+        "codes": {
+          "SNOMED-CT": [
+            "433491000124102"
+          ]
+        },
+        "description": "Colon Cancer Primary Tumor Size T4a",
+        "_type": "CodedResultValue"
+      }
+    ],
+    "_type": "Procedure"
+  },
+
+"procedurePerformed": {
+    "codes": {
+      "ICD-10-PCS": [
+        "0210093"
+      ],
+      "SNOMED-CT": [
+        "10190003"
+      ],
+      "ICD-9-PCS": [
+        "36.10"
+      ]
+    },
+    "description": "Procedure, Performed: Hospital measures-CABG",
+    "anatomical_target": {
+      "SNOMED-CT": [
+        "50018008"
+      ]
+    },
+    "end_time": 1362242700,
+    "incisionTime": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.6",
+    "ordinality": null,
+    "performer_id": null,
+    "reason": null,
+    "site": null,
+    "source": null,
+    "specifics": null,
+    "start_time": 1362239100,
+    "status_code": {
+      "HL7 ActStatus": [
+        "performed"
+      ]
+    },
+    "time": null,
+    "_type": "Procedure"
+  },
+
+"procedureOrdered": {
+    "codes": {
+      "ICD-10-PCS": [
+        "0210093"
+      ],
+      "SNOMED-CT": [
+        "10190003"
+      ],
+      "ICD-9-PCS": [
+        "36.10"
+      ]
+    },
+    "description": "Procedure, Ordered: Hospital measures-CABG",
+    "anatomical_target": {
+      "SNOMED-CT": [
+        "50018008"
+      ]
+    },
+    "end_time": 1362239100,
+    "incisionTime": null,
+    "mood_code": "RQO",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.6",
+    "ordinality": null,
+    "performer_id": null,
+    "reason": null,
+    "site": null,
+    "source": null,
+    "specifics": null,
+    "start_time": 1362239100,
+    "status_code": {
+      "HL7 ActStatus": [
+        "ordered"
+      ]
+    },
+    "time": null,
+    "_type": "Procedure"
+  },
+
+"procedureNotPerformed": {
+    "codes": {
+      "ICD-10-PCS": [
+        "0210093"
+      ],
+      "SNOMED-CT": [
+        "10190003"
+      ],
+      "ICD-9-PCS": [
+        "36.10"
+      ]
+    },
+    "description": "Procedure, Performed: Hospital measures-CABG",
+    "end_time": 1362239100,
+    "incisionTime": null,
+    "mood_code": "EVN",
+    "negationInd": true,
+    "negationReason": {
+      "SNOMED-CT": [
+        "397807004"
+      ]
+    },
+    "oid": "2.16.840.1.113883.3.560.1.6",
+    "ordinality": null,
+    "performer_id": null,
+    "reason": null,
+    "site": null,
+    "source": null,
+    "specifics": null,
+    "start_time": 1362239100,
+    "status_code": {
+      "HL7 ActStatus": [
+        "performed"
+      ]
+    },
+    "time": null,
+    "_type": "Procedure"
+  },
+
+"procedureRejected": {
+    "codes": {
+      "ICD-10-PCS": [
+        "0210093"
+      ],
+      "SNOMED-CT": [
+        "10190003"
+      ],
+      "ICD-9-PCS": [
+        "36.10"
+      ]
+    },
+    "description": "Procedure, Ordered: Hospital measures-CABG",
+    "anatomical_target": {
+      "SNOMED-CT": [
+        "50018008"
+      ]
+    },
+    "end_time": 1362239100,
+    "incisionTime": null,
+    "mood_code": "RQO",
+    "negationInd": true,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.6",
+    "ordinality": null,
+    "performer_id": null,
+    "reason": null,
+    "site": null,
+    "source": null,
+    "specifics": null,
+    "start_time": 1362239100,
+    "status_code": {
+      "HL7 ActStatus": [
+        "ordered"
+      ]
+    },
+    "time": null,
+    "_type": "Procedure"
+  }
+}
