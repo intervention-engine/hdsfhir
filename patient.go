@@ -48,7 +48,7 @@ func (p *Patient) FHIRModel() *fhir.Patient {
 }
 
 func (p *Patient) FHIRModels() []interface{} {
-	models := make([]interface{}, 0)
+	var models []interface{}
 	models = append(models, p.FHIRModel())
 	for _, encounter := range p.Encounters {
 		models = append(models, encounter.FHIRModels()...)
@@ -64,6 +64,9 @@ func (p *Patient) FHIRModels() []interface{} {
 	}
 	for _, medication := range p.Medications {
 		models = append(models, medication.FHIRModels()...)
+	}
+	for _, immunization := range p.Immunizations {
+		models = append(models, immunization.FHIRModels()...)
 	}
 
 	return models
@@ -90,6 +93,9 @@ func (p *Patient) UnmarshalJSON(data []byte) (err error) {
 		}
 		for _, medication := range p.Medications {
 			medication.Patient = p
+		}
+		for _, immunization := range p.Immunizations {
+			immunization.Patient = p
 		}
 
 	}

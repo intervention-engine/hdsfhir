@@ -322,6 +322,19 @@
       "_type": "Encounter"
     }
   ],
+  "immunizations": [
+    {
+      "codes": {
+        "CVX": [
+          "03"
+        ]
+      },
+      "time": 1263168508,
+      "description": "MMR",
+      "seriesNumber": 2,
+      "_type": "Immunization"
+    }
+  ],
   "medical_equipment": [
     {
       "anatomicalStructure": null,

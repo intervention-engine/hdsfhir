@@ -44,10 +44,16 @@ func (s *PatientSuite) TestPatientFHIRModel(c *C) {
 func (s *PatientSuite) TestFHIRModels(c *C) {
 	models := s.Patient.FHIRModels()
 	patient := s.Patient.FHIRModel()
-	c.Assert(models, HasLen, 19)
+	c.Assert(models, HasLen, 20)
 
-	// Test all references to the patient to ensure they were populated
+	typeMap := make(map[string]int)
 	for i := range models {
+		// Build a map to count the returned models by resource type
+		class := reflect.TypeOf(models[i]).Elem().Name()
+		count, _ := typeMap[class]
+		typeMap[class] = count + 1
+
+		// Test all references to the patient to ensure they were populated
 		patientVal := reflect.ValueOf(models[i]).Elem().FieldByName("Subject")
 		if !patientVal.IsValid() {
 			patientVal = reflect.ValueOf(models[i]).Elem().FieldByName("Patient")
@@ -56,6 +62,17 @@ func (s *PatientSuite) TestFHIRModels(c *C) {
 			c.Assert(patientVal.Interface().(*fhir.Reference).Reference, Equals, "cid:"+patient.Id)
 		}
 	}
+
+	// Test the resource type counts
+	c.Assert(typeMap, HasLen, 8)
+	c.Assert(typeMap["Condition"], Equals, 5)
+	c.Assert(typeMap["DiagnosticReport"], Equals, 1)
+	c.Assert(typeMap["Encounter"], Equals, 4)
+	c.Assert(typeMap["Immunization"], Equals, 2)
+	c.Assert(typeMap["MedicationStatement"], Equals, 1)
+	c.Assert(typeMap["Observation"], Equals, 4)
+	c.Assert(typeMap["Patient"], Equals, 1)
+	c.Assert(typeMap["Procedure"], Equals, 2)
 }
 
 func (s *PatientSuite) TestFHIRModelReferences(c *C) {
@@ -67,7 +84,7 @@ func (s *PatientSuite) TestFHIRModelReferences(c *C) {
 }
 
 func getAllReferences(models []interface{}) []*fhir.Reference {
-	refs := make([]*fhir.Reference, 0)
+	var refs []*fhir.Reference
 	for i := range models {
 		s := reflect.ValueOf(models[i]).Elem()
 		for j := 0; j < s.NumField(); j++ {
