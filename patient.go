@@ -8,15 +8,16 @@ import (
 
 type Patient struct {
 	TemporallyIdentified
-	FirstName   string        `json:"first"`
-	LastName    string        `json:"last"`
-	BirthTime   UnixTime      `json:"birthdate"`
-	Gender      string        `json:"gender"`
-	Encounters  []*Encounter  `json:"encounters"`
-	Conditions  []*Condition  `json:"conditions"`
-	VitalSigns  []*VitalSign  `json:"vital_signs"`
-	Procedures  []*Procedure  `json:"procedures"`
-	Medications []*Medication `json:"medications"`
+	FirstName     string          `json:"first"`
+	LastName      string          `json:"last"`
+	BirthTime     UnixTime        `json:"birthdate"`
+	Gender        string          `json:"gender"`
+	Encounters    []*Encounter    `json:"encounters"`
+	Conditions    []*Condition    `json:"conditions"`
+	VitalSigns    []*VitalSign    `json:"vital_signs"`
+	Procedures    []*Procedure    `json:"procedures"`
+	Medications   []*Medication   `json:"medications"`
+	Immunizations []*Immunization `json:"immunizations"`
 }
 
 // TODO: :allergies, :care_goals, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
@@ -47,7 +48,7 @@ func (p *Patient) FHIRModel() *fhir.Patient {
 }
 
 func (p *Patient) FHIRModels() []interface{} {
-	models := make([]interface{}, 0)
+	var models []interface{}
 	models = append(models, p.FHIRModel())
 	for _, encounter := range p.Encounters {
 		models = append(models, encounter.FHIRModels()...)
@@ -63,6 +64,9 @@ func (p *Patient) FHIRModels() []interface{} {
 	}
 	for _, medication := range p.Medications {
 		models = append(models, medication.FHIRModels()...)
+	}
+	for _, immunization := range p.Immunizations {
+		models = append(models, immunization.FHIRModels()...)
 	}
 
 	return models
@@ -89,6 +93,9 @@ func (p *Patient) UnmarshalJSON(data []byte) (err error) {
 		}
 		for _, medication := range p.Medications {
 			medication.Patient = p
+		}
+		for _, immunization := range p.Immunizations {
+			immunization.Patient = p
 		}
 
 	}

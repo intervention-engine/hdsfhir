@@ -1,0 +1,38 @@
+{
+  "hba1c": {
+    "codes": {
+      "LOINC": [
+        "17856-6"
+      ]
+    },
+    "description": "Laboratory Test, Result: HbA1c Laboratory Test",
+    "end_time": 1320149800,
+    "interpretation": {
+      "HL7 Observation Interpretation": [
+        "A"
+      ]
+    },
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.12",
+    "reason": null,
+    "referenceRange": null,
+    "specifics": null,
+    "start_time": 1320149800,
+    "status_code": {
+      "HL7 ActStatus": [
+        null
+      ]
+    },
+    "time": null,
+    "values": [
+      {
+        "scalar": "8",
+        "unit": "%",
+        "_type": "PhysicalQuantityResultValue"
+      }
+    ],
+    "_type": "VitalSign"
+  }
+}

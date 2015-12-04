@@ -1,0 +1,207 @@
+{
+"medicationOrdered": {
+    "administrationTiming": null,
+    "codes": {
+      "RxNorm": [
+        "1000048"
+      ]
+    },
+    "cumulativeMedicationDuration": null,
+    "deliveryMethod": null,
+    "description": "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)",
+    "dose": null,
+    "doseIndicator": null,
+    "doseRestriction": null,
+    "end_time": 1349092800,
+    "freeTextSig": null,
+    "free_text": null,
+    "fulfillmentInstructions": null,
+    "indication": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.17",
+    "patientInstructions": null,
+    "productForm": null,
+    "reaction": null,
+    "reason": null,
+    "route": null,
+    "site": null,
+    "specifics": null,
+    "start_time": 1349092800,
+    "statusOfMedication": null,
+    "status_code": {
+      "HL7 ActStatus": [
+        "ordered"
+      ]
+    }
+  },
+
+"medicationDispensed": {
+    "administrationTiming": null,
+    "codes": {
+      "RxNorm": [
+        "1000048"
+      ]
+    },
+    "cumulativeMedicationDuration": null,
+    "deliveryMethod": null,
+    "description": "Medication, Dispensed: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)",
+    "dose": null,
+    "doseIndicator": null,
+    "doseRestriction": null,
+    "end_time": 1349092800,
+    "freeTextSig": null,
+    "free_text": null,
+    "fulfillmentInstructions": null,
+    "indication": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.17",
+    "patientInstructions": null,
+    "productForm": null,
+    "reaction": null,
+    "reason": null,
+    "route": null,
+    "site": null,
+    "specifics": null,
+    "start_time": 1349092800,
+    "statusOfMedication": null,
+    "status_code": {
+      "HL7 ActStatus": [
+        "dispensed"
+      ]
+    }
+  },
+
+"medicationNotOrdered": {
+    "administrationTiming": null,
+    "codes": {
+      "RxNorm": [
+        "1000048"
+      ]
+    },
+    "cumulativeMedicationDuration": null,
+    "deliveryMethod": null,
+    "description": "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)",
+    "dose": null,
+    "doseIndicator": null,
+    "doseRestriction": null,
+    "end_time": 1349092800,
+    "freeTextSig": null,
+    "free_text": null,
+    "fulfillmentInstructions": null,
+    "indication": null,
+    "mood_code": "EVN",
+    "negationInd": true,
+    "negationReason": {
+      "SNOMED-CT": [
+        "416098002"
+      ]
+    },
+    "oid": "2.16.840.1.113883.3.560.1.17",
+    "patientInstructions": null,
+    "productForm": null,
+    "reaction": null,
+    "reason": null,
+    "route": null,
+    "site": null,
+    "specifics": null,
+    "start_time": 1349092800,
+    "statusOfMedication": null,
+    "status_code": {
+      "HL7 ActStatus": [
+        "ordered"
+      ]
+    }
+  },
+
+"immunizationAdministered": {
+    "administrationTiming": null,
+    "codes": {
+      "CVX": [
+        "33"
+      ]
+    },
+    "cumulativeMedicationDuration": null,
+    "deliveryMethod": null,
+    "description": "Immunization, Administered: Pneumococcal Vaccine (Code List: 2.16.840.1.113883.3.464.1003.110.12.1027)",
+    "dose": null,
+    "doseIndicator": null,
+    "doseRestriction": null,
+    "end_time": 1313409600,
+    "freeTextSig": null,
+    "free_text": null,
+    "fulfillmentInstructions": null,
+    "indication": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.14",
+    "patientInstructions": null,
+    "productForm": null,
+    "reaction": null,
+    "reason": null,
+    "route": null,
+    "site": null,
+    "specifics": null,
+    "start_time": 1313409600,
+    "statusOfMedication": null,
+    "status_code": {
+      "HL7 ActStatus": [
+        "administered"
+      ]
+    },
+    "time": null,
+    "typeOfMedication": null,
+    "vehicle": null,
+    "_type": "Medication"
+  },
+
+"immunizationNotAdministered": {
+    "administrationTiming": null,
+    "codes": {
+      "CVX": [
+        "33"
+      ]
+    },
+    "cumulativeMedicationDuration": null,
+    "deliveryMethod": null,
+    "description": "Immunization, Administered: Pneumococcal Vaccine (Code List: 2.16.840.1.113883.3.464.1003.110.12.1027)",
+    "dose": null,
+    "doseIndicator": null,
+    "doseRestriction": null,
+    "end_time": 1313409600,
+    "freeTextSig": null,
+    "free_text": null,
+    "fulfillmentInstructions": null,
+    "indication": null,
+    "mood_code": "EVN",
+    "negationInd": true,
+    "negationReason": {
+      "SNOMED-CT": [
+        "591000119102"
+      ]
+    },
+    "oid": "2.16.840.1.113883.3.560.1.14",
+    "patientInstructions": null,
+    "productForm": null,
+    "reaction": null,
+    "reason": null,
+    "route": null,
+    "site": null,
+    "specifics": null,
+    "start_time": 1313409600,
+    "statusOfMedication": null,
+    "status_code": {
+      "HL7 ActStatus": [
+        "administered"
+      ]
+    },
+    "time": null,
+    "typeOfMedication": null,
+    "vehicle": null,
+    "_type": "Medication"
+  }
+}

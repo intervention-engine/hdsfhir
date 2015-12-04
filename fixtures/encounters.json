@@ -1,0 +1,105 @@
+{
+"officeVisit": {
+    "admitTime": null,
+    "admitType": null,
+    "codes": {
+      "CPT": [
+        "99201"
+      ]
+    },
+    "description": "Encounter, Performed: Office Visit (Code List: 2.16.840.1.113883.3.464.1003.101.12.1001)",
+    "dischargeDisposition": null,
+    "dischargeTime": null,
+    "end_time": 1320152400,
+    "free_text": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.79",
+    "performer_id": null,
+    "reason": null,
+    "specifics": null,
+    "start_time": 1320148800,
+    "status_code": {
+      "HL7 ActStatus": [
+        "performed"
+      ]
+    },
+    "time": null,
+    "transferFrom": null,
+    "transferTo": null,
+    "_type": "Encounter"
+  },
+
+"orderedOfficeVisit": {
+    "admitTime": null,
+    "admitType": null,
+    "codes": {
+      "CPT": [
+        "99201"
+      ]
+    },
+    "description": "Encounter, Order: Office Visit (Code List: 2.16.840.1.113883.3.464.1003.101.12.1001)",
+    "dischargeDisposition": null,
+    "dischargeTime": null,
+    "end_time": 1320148800,
+    "free_text": null,
+    "mood_code": "RQO",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.83",
+    "performer_id": null,
+    "reason": {
+      "SNOMED-CT": [
+        "2070002"
+      ]
+    },
+    "specifics": null,
+    "start_time": 1320148800,
+    "status_code": {
+      "HL7 ActStatus": [
+        "ordered"
+      ]
+    },
+    "time": null,
+    "transferFrom": null,
+    "transferTo": null,
+    "_type": "Encounter"
+  },
+
+"inpatientEncounter": {
+    "admitTime": null,
+    "admitType": null,
+    "codes": {
+      "CPT": [
+        "99235"
+      ]
+    },
+    "description": "Encounter, Performed: Inpatient Encounter",
+    "dischargeDisposition": {
+      "NUBC": [
+        "1"
+      ]
+    },
+    "dischargeTime": null,
+    "end_time": 1320152400,
+    "free_text": null,
+    "mood_code": "EVN",
+    "negationInd": null,
+    "negationReason": null,
+    "oid": "2.16.840.1.113883.3.560.1.79",
+    "performer_id": null,
+    "reason": null,
+    "specifics": null,
+    "start_time": 1320148800,
+    "status_code": {
+      "HL7 ActStatus": [
+        "performed"
+      ]
+    },
+    "time": null,
+    "transferFrom": null,
+    "transferTo": null,
+    "_type": "Encounter"
+  }
+}

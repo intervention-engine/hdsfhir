@@ -5,7 +5,7 @@ import fhir "github.com/intervention-engine/fhir/models"
 type VitalSign struct {
 	Entry
 	Description    string        `json:"description"`
-	Interpretation string        `json:"interpretation"`
+	Interpretation CodeMap       `json:"interpretation"`
 	Values         []ResultValue `json:"values"`
 }
 
@@ -22,6 +22,9 @@ func (v *VitalSign) FHIRModels() []interface{} {
 	fhirObservation.Code = v.Codes.FHIRCodeableConcept(v.Description)
 	fhirObservation.Encounter = v.Patient.MatchingEncounterReference(v.Entry)
 	fhirObservation.EffectivePeriod = v.GetFHIRPeriod()
+	if len(v.Interpretation) > 0 {
+		fhirObservation.Interpretation = v.Interpretation.FHIRCodeableConcept("")
+	}
 	fhirObservation.Subject = v.Patient.FHIRReference()
 
 	return []interface{}{fhirObservation}

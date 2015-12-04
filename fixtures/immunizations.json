@@ -1,0 +1,30 @@
+{
+  "immunizationAdministered": {
+    "codes": {
+      "CVX": [
+        "03"
+      ]
+    },
+    "time": 1263168508,
+    "description": "MMR",
+    "seriesNumber": 2,
+    "_type": "Immunization"
+  },
+
+  "immunizationNotAdministered": {
+    "codes": {
+      "CVX": [
+        "03"
+      ]
+    },
+    "time": 1263168508,
+    "description": "MMR",
+    "negationInd": true,
+    "negationReason": {
+      "SNOMED-CT": [
+        "591000119102"
+      ]
+    },
+    "_type": "Immunization"
+  }
+}
