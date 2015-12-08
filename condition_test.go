@@ -95,7 +95,7 @@ func (s *ConditionSuite) TestActiveStatusWithAbatementCondition(c *C) {
 	c.Assert(condition.Code.MatchesCode("http://snomed.info/sct", "10091002"), Equals, true)
 	c.Assert(condition.Code.MatchesCode("http://hl7.org/fhir/sid/icd-9", "428.0"), Equals, true)
 	c.Assert(condition.Code.MatchesCode("http://hl7.org/fhir/sid/icd-10", "I50.1"), Equals, true)
-	c.Assert(condition.ClinicalStatus, Equals, "remission")
+	c.Assert(condition.ClinicalStatus, Equals, "active")
 	c.Assert(condition.VerificationStatus, Equals, "confirmed")
 	c.Assert(condition.Severity, IsNil)
 	c.Assert(condition.OnsetDateTime, DeepEquals, NewUnixTime(1330603200).FHIRDateTime())

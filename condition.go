@@ -47,12 +47,9 @@ func (c *Condition) convertClinicalStatus() string {
 	}
 
 	// In order to remain consistent, fix the status if there is an end date (abatement)
-	if c.EndTime != 0 {
-		if status == "" {
-			status = "resolved"
-		} else if status == "active" {
-			status = "remission" // closest concept to active with an abatement
-		}
+	// and it is after the start date (onset)
+	if status == "" && c.EndTime != 0 && c.EndTime != c.StartTime {
+		status = "resolved"
 	}
 
 	return status
