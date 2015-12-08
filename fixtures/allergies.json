@@ -1,0 +1,148 @@
+{
+"active": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "start_time" : 1325396520,
+    "severity": {
+      "SNOMED-CT": [
+        "371924009"
+      ]
+    },
+    "reaction": {
+      "SNOMED-CT": [
+        "421581006"
+      ]
+    },
+    "status_code" : {
+      "SNOMED-CT": [
+        "55561003"
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  },
+
+"defaultStatus": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "time" : 1325396520,
+    "status_code" : {
+      "HL7 ActStatus" : [
+        null
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  },
+
+"inactive": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "start_time" : 1325396520,
+    "status_code" : {
+      "SNOMED-CT": [
+        "73425007"
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  },
+
+"resolved": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "time" : 1325396520,
+    "status_code" : {
+      "SNOMED-CT": [
+        "413322009"
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  },
+
+"mild": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "start_time" : 1325396520,
+    "severity": {
+      "SNOMED-CT": [
+        "255604002"
+      ]
+    },
+    "status_code" : {
+      "SNOMED-CT": [
+        "55561003"
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  },
+
+"moderate": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "start_time" : 1325396520,
+    "severity": {
+      "SNOMED-CT": [
+        "6736007"
+      ]
+    },
+    "status_code" : {
+      "SNOMED-CT": [
+        "55561003"
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  },
+
+"negated": {
+    "codes" : {
+      "CVX" : [
+        "111"
+      ]
+    },
+    "mood_code" : "EVN",
+    "negationInd": true,
+    "_type" : "Allergy",
+    "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
+    "time" : 1325396520,
+    "status_code" : {
+      "HL7 ActStatus" : [
+        null
+      ]
+    },
+    "oid" : "2.16.840.1.113883.3.560.1.1"
+  }
+}
