@@ -10,14 +10,12 @@
     "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
     "start_time" : 1325396520,
     "severity": {
-      "SNOMED-CT": [
-        "371924009"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "371924009"
     },
     "reaction": {
-      "SNOMED-CT": [
-        "421581006"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "421581006"
     },
     "status_code" : {
       "SNOMED-CT": [
@@ -92,9 +90,8 @@
     "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
     "start_time" : 1325396520,
     "severity": {
-      "SNOMED-CT": [
-        "255604002"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "255604002"
     },
     "status_code" : {
       "SNOMED-CT": [
@@ -115,9 +112,8 @@
     "description" : "Medication, Allergy: Influenza Vaccine (Code List: 2.16.840.1.113883.3.526.3.1254)",
     "start_time" : 1325396520,
     "severity": {
-      "SNOMED-CT": [
-        "6736007"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "6736007"
     },
     "status_code" : {
       "SNOMED-CT": [

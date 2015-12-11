@@ -72,9 +72,8 @@
     },
     "description": "Procedure, Performed: Hospital measures-CABG",
     "anatomical_target": {
-      "SNOMED-CT": [
-        "50018008"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "50018008"
     },
     "end_time": 1362242700,
     "incisionTime": null,
@@ -112,9 +111,8 @@
     },
     "description": "Procedure, Ordered: Hospital measures-CABG",
     "anatomical_target": {
-      "SNOMED-CT": [
-        "50018008"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "50018008"
     },
     "end_time": 1362239100,
     "incisionTime": null,
@@ -156,9 +154,8 @@
     "mood_code": "EVN",
     "negationInd": true,
     "negationReason": {
-      "SNOMED-CT": [
-        "397807004"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "397807004"
     },
     "oid": "2.16.840.1.113883.3.560.1.6",
     "ordinality": null,
@@ -191,9 +188,8 @@
     },
     "description": "Procedure, Ordered: Hospital measures-CABG",
     "anatomical_target": {
-      "SNOMED-CT": [
-        "50018008"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "50018008"
     },
     "end_time": 1362239100,
     "incisionTime": null,

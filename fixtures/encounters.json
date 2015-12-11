@@ -50,9 +50,11 @@
     "oid": "2.16.840.1.113883.3.560.1.83",
     "performer_id": null,
     "reason": {
-      "SNOMED-CT": [
-        "2070002"
-      ]
+      "codes": {
+        "SNOMED-CT": [
+          "2070002"
+        ]
+      }
     },
     "specifics": null,
     "start_time": 1320148800,
@@ -77,9 +79,8 @@
     },
     "description": "Encounter, Performed: Inpatient Encounter",
     "dischargeDisposition": {
-      "NUBC": [
-        "1"
-      ]
+      "codeSystem": "NUBC",
+      "code": "1"
     },
     "dischargeTime": null,
     "end_time": 1320152400,

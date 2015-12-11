@@ -8,9 +8,8 @@
     "description": "Laboratory Test, Result: HbA1c Laboratory Test",
     "end_time": 1320149800,
     "interpretation": {
-      "HL7 Observation Interpretation": [
-        "A"
-      ]
+      "codeSystem": "HL7 Observation Interpretation",
+      "code": "A"
     },
     "mood_code": "EVN",
     "negationInd": null,

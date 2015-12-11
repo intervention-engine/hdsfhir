@@ -25,7 +25,7 @@ func (m *Medication) convertMedication() []interface{} {
 		t := true
 		fhirMedicationStatement.WasNotTaken = &t
 	}
-	if len(m.NegationReason) > 0 {
+	if m.NegationReason != nil {
 		cc := m.NegationReason.FHIRCodeableConcept("")
 		fhirMedicationStatement.ReasonNotTaken = []fhir.CodeableConcept{*cc}
 	}
@@ -87,7 +87,7 @@ func (m *Medication) convertImmunization() []interface{} {
 		t := true
 		fhirImmunization.WasNotGiven = &t
 	}
-	if len(m.NegationReason) > 0 {
+	if m.NegationReason != nil {
 		cc := m.NegationReason.FHIRCodeableConcept("")
 		fhirImmunization.Explanation = &fhir.ImmunizationExplanationComponent{
 			ReasonNotGiven: []fhir.CodeableConcept{*cc},

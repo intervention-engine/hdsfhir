@@ -19,3 +19,12 @@ func (s *CodeMapSuite) TestCodeMapToCodeableConcept(c *C) {
 	c.Assert(concept.MatchesCode("http://snomed.info/sct", "5678"), Equals, true)
 	c.Assert(concept.MatchesCode("http://www.ama-assn.org/go/cpt", "abcd"), Equals, true)
 }
+
+func (s *CodeMapSuite) TestCodeObjectToCodeableConcept(c *C) {
+	codeObj := CodeObject{CodeSystem: "SNOMED-CT", Code: "1234"}
+
+	concept := codeObj.FHIRCodeableConcept("test")
+	c.Assert(concept.Text, Equals, "test")
+	c.Assert(concept.Coding, HasLen, 1)
+	c.Assert(concept.MatchesCode("http://snomed.info/sct", "1234"), Equals, true)
+}
