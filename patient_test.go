@@ -44,7 +44,7 @@ func (s *PatientSuite) TestPatientFHIRModel(c *C) {
 func (s *PatientSuite) TestFHIRModels(c *C) {
 	models := s.Patient.FHIRModels()
 	patient := s.Patient.FHIRModel()
-	c.Assert(models, HasLen, 20)
+	c.Assert(models, HasLen, 21)
 
 	typeMap := make(map[string]int)
 	for i := range models {
@@ -64,7 +64,7 @@ func (s *PatientSuite) TestFHIRModels(c *C) {
 	}
 
 	// Test the resource type counts
-	c.Assert(typeMap, HasLen, 8)
+	c.Assert(typeMap, HasLen, 9)
 	c.Assert(typeMap["Condition"], Equals, 5)
 	c.Assert(typeMap["DiagnosticReport"], Equals, 1)
 	c.Assert(typeMap["Encounter"], Equals, 4)
@@ -73,6 +73,7 @@ func (s *PatientSuite) TestFHIRModels(c *C) {
 	c.Assert(typeMap["Observation"], Equals, 4)
 	c.Assert(typeMap["Patient"], Equals, 1)
 	c.Assert(typeMap["Procedure"], Equals, 2)
+	c.Assert(typeMap["AllergyIntolerance"], Equals, 1)
 }
 
 func (s *PatientSuite) TestFHIRModelReferences(c *C) {

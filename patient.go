@@ -18,9 +18,10 @@ type Patient struct {
 	Procedures    []*Procedure    `json:"procedures"`
 	Medications   []*Medication   `json:"medications"`
 	Immunizations []*Immunization `json:"immunizations"`
+	Allergies     []*Allergy      `json:"allergies"`
 }
 
-// TODO: :allergies, :care_goals, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
+// TODO: :care_goals, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
 
 func (p *Patient) MatchingEncounterReference(entry Entry) *fhir.Reference {
 	for _, encounter := range p.Encounters {
@@ -68,6 +69,9 @@ func (p *Patient) FHIRModels() []interface{} {
 	for _, immunization := range p.Immunizations {
 		models = append(models, immunization.FHIRModels()...)
 	}
+	for _, allergy := range p.Allergies {
+		models = append(models, allergy.FHIRModels()...)
+	}
 
 	return models
 }
@@ -96,6 +100,9 @@ func (p *Patient) UnmarshalJSON(data []byte) (err error) {
 		}
 		for _, immunization := range p.Immunizations {
 			immunization.Patient = p
+		}
+		for _, allergy := range p.Allergies {
+			allergy.Patient = p
 		}
 
 	}
