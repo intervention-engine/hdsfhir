@@ -4,8 +4,8 @@ import fhir "github.com/intervention-engine/fhir/models"
 
 type Encounter struct {
 	Entry
-	Reason               CodeMap `json:"reason"`
-	DischargeDisposition CodeMap `json:"dischargeDisposition"`
+	Reason               *Entry      `json:"reason"`
+	DischargeDisposition *CodeObject `json:"dischargeDisposition"`
 }
 
 func (e *Encounter) FHIRModels() []interface{} {
@@ -15,11 +15,11 @@ func (e *Encounter) FHIRModels() []interface{} {
 	fhirEncounter.Type = []fhir.CodeableConcept{*typeConcept}
 	fhirEncounter.Patient = e.Patient.FHIRReference()
 	fhirEncounter.Period = e.GetFHIRPeriod()
-	if len(e.Reason) > 0 {
-		reasonConcept := e.Reason.FHIRCodeableConcept("")
+	if e.Reason != nil && len(e.Reason.Codes) > 0 {
+		reasonConcept := e.Reason.Codes.FHIRCodeableConcept("")
 		fhirEncounter.Reason = []fhir.CodeableConcept{*reasonConcept}
 	}
-	if len(e.DischargeDisposition) > 0 {
+	if e.DischargeDisposition != nil {
 		fhirEncounter.Hospitalization = &fhir.EncounterHospitalizationComponent{
 			DischargeDisposition: e.DischargeDisposition.FHIRCodeableConcept(""),
 		}

@@ -4,8 +4,8 @@ import fhir "github.com/intervention-engine/fhir/models"
 
 type Allergy struct {
 	Entry
-	Reaction CodeMap `json:"reaction"`
-	Severity CodeMap `json:"severity"`
+	Reaction *CodeObject `json:"reaction"`
+	Severity *CodeObject `json:"severity"`
 }
 
 func (a *Allergy) FHIRModels() []interface{} {
@@ -19,7 +19,7 @@ func (a *Allergy) FHIRModels() []interface{} {
 	fhirAllergy.Substance = a.Codes.FHIRCodeableConcept(a.Description)
 	fhirAllergy.Status = a.convertStatus()
 	fhirAllergy.Criticality = a.convertCriticality()
-	if len(a.Reaction) != 0 {
+	if a.Reaction != nil {
 		cc := a.Reaction.FHIRCodeableConcept("")
 		fhirAllergy.Reaction = []fhir.AllergyIntoleranceReactionComponent{
 			{Manifestation: []fhir.CodeableConcept{*cc}},
@@ -65,7 +65,7 @@ func (a *Allergy) convertStatus() string {
 //   http://hl7.org/fhir/DSTU2/valueset-allergy-intolerance-criticality.html
 // If the severity can't be mapped, criticality will be left blank
 func (a *Allergy) convertCriticality() string {
-	if len(a.Severity) == 0 {
+	if a.Severity == nil {
 		return ""
 	}
 

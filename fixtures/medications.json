@@ -96,9 +96,8 @@
     "mood_code": "EVN",
     "negationInd": true,
     "negationReason": {
-      "SNOMED-CT": [
-        "416098002"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "416098002"
     },
     "oid": "2.16.840.1.113883.3.560.1.17",
     "patientInstructions": null,
@@ -180,9 +179,8 @@
     "mood_code": "EVN",
     "negationInd": true,
     "negationReason": {
-      "SNOMED-CT": [
-        "591000119102"
-      ]
+      "codeSystem": "SNOMED-CT",
+      "code": "591000119102"
     },
     "oid": "2.16.840.1.113883.3.560.1.14",
     "patientInstructions": null,

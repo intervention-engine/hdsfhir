@@ -19,6 +19,20 @@ func (c *CodeMap) FHIRCodeableConcept(text string) *fhir.CodeableConcept {
 	return concept
 }
 
+type CodeObject struct {
+	Code       string `json:"code"`
+	CodeSystem string `json:"codeSystem"`
+}
+
+func (c *CodeObject) FHIRCodeableConcept(text string) *fhir.CodeableConcept {
+	concept := &fhir.CodeableConcept{}
+	concept.Coding = []fhir.Coding{
+		{System: CodeSystemMap[c.CodeSystem], Code: c.Code},
+	}
+	concept.Text = text
+	return concept
+}
+
 var CodeSystemMap = map[string]string{
 	"CPT":                             "http://www.ama-assn.org/go/cpt",
 	"LOINC":                           "http://loinc.org",

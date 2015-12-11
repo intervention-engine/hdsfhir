@@ -4,6 +4,8 @@ import fhir "github.com/intervention-engine/fhir/models"
 
 type Condition struct {
 	Entry
+	// NOTE: HDS has inconsistent representations of severity, but the only working importer (cat1)
+	// models it like a CodeMap -- so that's what we assume.  Note the difference from Allergy.
 	Severity CodeMap `json:"severity"`
 }
 

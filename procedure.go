@@ -4,7 +4,7 @@ import fhir "github.com/intervention-engine/fhir/models"
 
 type Procedure struct {
 	Entry
-	AnatomicalTarget CodeMap       `json:"anatomical_target"`
+	AnatomicalTarget *CodeObject   `json:"anatomical_target"`
 	Values           []ResultValue `json:"values"`
 }
 
@@ -51,11 +51,11 @@ func (p *Procedure) convertProcedure() []interface{} {
 		t := true
 		fhirProcedure.NotPerformed = &t
 	}
-	if len(p.NegationReason) > 0 {
+	if p.NegationReason != nil {
 		cc := p.NegationReason.FHIRCodeableConcept("")
 		fhirProcedure.ReasonNotPerformed = []fhir.CodeableConcept{*cc}
 	}
-	if len(p.AnatomicalTarget) > 0 {
+	if p.AnatomicalTarget != nil {
 		cc := p.AnatomicalTarget.FHIRCodeableConcept("")
 		fhirProcedure.BodySite = []fhir.CodeableConcept{*cc}
 	}
@@ -132,7 +132,7 @@ func (p *Procedure) convertProcedureRequest() []interface{} {
 	fhirProcedureRequest.Subject = p.Patient.FHIRReference()
 	fhirProcedureRequest.Status = p.convertProcedureRequestStatus()
 	fhirProcedureRequest.Code = p.Codes.FHIRCodeableConcept(p.Description)
-	if len(p.AnatomicalTarget) > 0 {
+	if p.AnatomicalTarget != nil {
 		cc := p.AnatomicalTarget.FHIRCodeableConcept("")
 		fhirProcedureRequest.BodySite = []fhir.CodeableConcept{*cc}
 	}

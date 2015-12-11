@@ -17,7 +17,7 @@ func (i *Immunization) FHIRModels() []interface{} {
 		t := true
 		fhirImmunization.WasNotGiven = &t
 	}
-	if len(i.NegationReason) > 0 {
+	if i.NegationReason != nil {
 		cc := i.NegationReason.FHIRCodeableConcept("")
 		fhirImmunization.Explanation = &fhir.ImmunizationExplanationComponent{
 			ReasonNotGiven: []fhir.CodeableConcept{*cc},
