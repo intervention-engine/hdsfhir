@@ -43,7 +43,8 @@ func (p *Procedure) isProcedureRequest() bool {
 }
 
 func (p *Procedure) convertProcedure() []interface{} {
-	fhirProcedure := &fhir.Procedure{Id: p.GetTempID()}
+	fhirProcedure := &fhir.Procedure{}
+	fhirProcedure.Id = p.GetTempID()
 	fhirProcedure.Subject = p.Patient.FHIRReference()
 	fhirProcedure.Status = p.convertProcedureStatus()
 	fhirProcedure.Code = p.Codes.FHIRCodeableConcept(p.Description)
@@ -66,7 +67,8 @@ func (p *Procedure) convertProcedure() []interface{} {
 	if len(p.Values) > 0 {
 		// Create the diagnostic report model with its own ID and slots for results
 		internalReportID := &TemporallyIdentified{}
-		fhirReport := &fhir.DiagnosticReport{Id: internalReportID.GetTempID()}
+		fhirReport := &fhir.DiagnosticReport{}
+		fhirReport.Id = internalReportID.GetTempID()
 		fhirReport.Status = "final"
 		fhirReport.Code = &fhir.CodeableConcept{
 			Coding: []fhir.Coding{
@@ -128,7 +130,8 @@ func (p *Procedure) convertProcedureStatus() string {
 }
 
 func (p *Procedure) convertProcedureRequest() []interface{} {
-	fhirProcedureRequest := &fhir.ProcedureRequest{Id: p.GetTempID()}
+	fhirProcedureRequest := &fhir.ProcedureRequest{}
+	fhirProcedureRequest.Id = p.GetTempID()
 	fhirProcedureRequest.Subject = p.Patient.FHIRReference()
 	fhirProcedureRequest.Status = p.convertProcedureRequestStatus()
 	fhirProcedureRequest.Code = p.Codes.FHIRCodeableConcept(p.Description)

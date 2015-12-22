@@ -34,7 +34,8 @@ func (p *Patient) MatchingEncounterReference(entry Entry) *fhir.Reference {
 }
 
 func (p *Patient) FHIRModel() *fhir.Patient {
-	fhirPatient := &fhir.Patient{Id: p.GetTempID()}
+	fhirPatient := &fhir.Patient{}
+	fhirPatient.Id = p.GetTempID()
 	fhirPatient.Name = []fhir.HumanName{fhir.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
 	switch p.Gender {
 	case "M":
