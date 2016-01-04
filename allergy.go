@@ -9,7 +9,8 @@ type Allergy struct {
 }
 
 func (a *Allergy) FHIRModels() []interface{} {
-	fhirAllergy := &fhir.AllergyIntolerance{Id: a.GetTempID()}
+	fhirAllergy := &fhir.AllergyIntolerance{}
+	fhirAllergy.Id = a.GetTempID()
 	if a.StartTime != 0 {
 		fhirAllergy.Onset = a.StartTime.FHIRDateTime()
 	} else if a.Time != 0 {

@@ -18,7 +18,8 @@ func (m *Medication) FHIRModels() []interface{} {
 
 func (m *Medication) convertMedication() []interface{} {
 	// TODO: Use more specific medication resources (MedicationOrder, MedicationAdministration, etc.)
-	fhirMedicationStatement := &fhir.MedicationStatement{Id: m.GetTempID()}
+	fhirMedicationStatement := &fhir.MedicationStatement{}
+	fhirMedicationStatement.Id = m.GetTempID()
 	fhirMedicationStatement.Patient = m.Patient.FHIRReference()
 	fhirMedicationStatement.Status = m.convertMedicationStatus()
 	if m.NegationInd {
@@ -78,7 +79,8 @@ func (m *Medication) convertMedicationStatus() string {
 }
 
 func (m *Medication) convertImmunization() []interface{} {
-	fhirImmunization := &fhir.Immunization{Id: m.GetTempID()}
+	fhirImmunization := &fhir.Immunization{}
+	fhirImmunization.Id = m.GetTempID()
 	fhirImmunization.Status = m.convertImmunizationStatus()
 	fhirImmunization.Date = m.StartTime.FHIRDateTime()
 	fhirImmunization.VaccineCode = m.Codes.FHIRCodeableConcept(m.Description)

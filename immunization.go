@@ -8,7 +8,8 @@ type Immunization struct {
 }
 
 func (i *Immunization) FHIRModels() []interface{} {
-	fhirImmunization := &fhir.Immunization{Id: i.GetTempID()}
+	fhirImmunization := &fhir.Immunization{}
+	fhirImmunization.Id = i.GetTempID()
 	fhirImmunization.Status = "completed"
 	fhirImmunization.Date = i.Time.FHIRDateTime()
 	fhirImmunization.VaccineCode = i.Codes.FHIRCodeableConcept(i.Description)

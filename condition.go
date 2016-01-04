@@ -10,7 +10,8 @@ type Condition struct {
 }
 
 func (c *Condition) FHIRModels() []interface{} {
-	fhirCondition := &fhir.Condition{Id: c.GetTempID()}
+	fhirCondition := &fhir.Condition{}
+	fhirCondition.Id = c.GetTempID()
 	fhirCondition.Patient = c.Patient.FHIRReference()
 	fhirCondition.Code = c.Codes.FHIRCodeableConcept(c.Description)
 	// TODO: consider setting category to "diagnosis"
