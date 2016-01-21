@@ -1,0 +1,8 @@
+sudo: false
+language: go
+services:
+  - mongodb
+
+branches:
+  only:
+    - master
