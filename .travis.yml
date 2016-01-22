@@ -7,4 +7,4 @@ branches:
   - master
 notifications:
   slack:
-    secure: Sz0HRgIE23pnsneB/jfKP01E2mRLgPUO72bIiCpTkeRZs3GeMso+eijCDSNwiR+429jK0/LlJhMS2c6CqQDuluMk+GvmQuRgqmj7kB0FDGqCqPpPeU7SsotOt27NRa73nyz8wj1ffmSitvL5emjrZsSIS4nIQF6GEobRI1p3xbY=
+    secure: eCPvNyvRUKpbw5pdme7FBMFMYFIopJbdX7Mq5udNsrU2qtFhfYgb++EAQDmICQf0XihbMR75kBZuexBQytucvoId+whWdjsO+cGyR+w2a+lOmDZMNF7LJiLes9zvxZxYbi8BAB3JyrTvkDSh53OviuhjyE53lxg1fJaqxAfkhOA=
