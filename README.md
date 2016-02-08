@@ -1,48 +1,66 @@
-HDS to FHIR
-===============================
+HDS to FHIR [![Build Status](https://travis-ci.org/intervention-engine/hdsfhir.svg?branch=master)](https://travis-ci.org/intervention-engine/hdsfhir)
+=====================================================================================================================================================
 
-This project converts JSON data for a patient in the structure used by
-[health-data-standards](https://github.com/projectcypress/health-data-standards)
-into the [HL7 FHIR](http://hl7.org/implement/standards/fhir/) models defined
-in the Intervention Engine [fhir](https://github.com/interventionengine/fhir)
-project.
+This project converts JSON data for a patient in the structure used by[health-data-standards](https://github.com/projectcypress/health-data-standards) into the [HL7 FHIR DSTU2](http://hl7.org/fhir/DSTU2/index.html) models defined in the Intervention Engine [fhir](https://github.com/interventionengine/fhir) project.
 
-Environment
------------
+*NOTE: The HDS-to-FHIR conversion focuses only on those data elements that are needed by Intervention Engine. It is not a complete and robust conversion.*
 
-This project currently uses Go 1.4 and is built using the Go toolchain.
+Building hdsfhir Locally
+------------------------
 
-To install Go, follow the instructions found at the [Go Website](http://golang.org/doc/install).
+For information on installing and running the full Intervention Engine stack, please see [Building and Running the Intervention Engine Stack in a Development Environment](https://github.com/intervention-engine/ie/blob/master/docs/dev_install.md).
 
-Following standard Go practices, you should clone this project to:
+The *hdsfhir* project is a Go library. For information related specifically to building the code in this repository (*hdsfhir*), please refer to the following sections in the above guide:
 
-    $GOPATH/src/github.com/intervention-engine/hdsfhir
+-	(Prerequisite) [Install Git](https://github.com/intervention-engine/ie/blob/master/docs/dev_install.md#install-git)
+-	(Prerequisite) [Install Go](https://github.com/intervention-engine/ie/blob/master/docs/dev_install.md#install-go)
+-	[Clone hdsfhir Repository](https://github.com/intervention-engine/ie/blob/master/docs/dev_install.md#clone-hdsfhir-repository)
 
-To get all of the dependencies for this project, run:
+To build the *hdsfhir* library, you must install its dependencies via `go get` first, and then build it:
 
-    go get
+```
+$ cd $GOPATH/src/github.com/intervention-engine/hdsfhir
+$ go get
+$ go build
+```
 
-in this directory.
+For information on using the *uploadhds* tool to convert HDS patients to FHIR and upload them to a FHIR server, please refer to the [uploadhds](https://github.com/intervention-engine/tools#uploadhds) section of the [tools](https://github.com/intervention-engine/tools) repository README.
 
-To run all of the tests for this project, run:
+Using hdsfhir as a library
+--------------------------
 
-    go test ./...
+The following is a simple example of converting a HDS patient to the corresponding slice of FHIR models:
 
-in this directory.
+```go
+import (
+	"encoding/json"
+	"io/ioutil"
+	"github.com/intervention-engine/hdsfhir"
+)
+
+func ExampleConversion(pathToHdsPatient string) ([]interface{}, error) {
+	data, err := ioutil.ReadFile(pathToHdsPatient)
+	if err != nil {
+		return nil, err
+	}
+
+	p := &hdsfhir.Patient{}
+	err = json.Unmarshal(data, p)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.FHIRModels(), nil
+}
+```
 
 License
 -------
 
-Copyright 2015 The MITRE Corporation
+Copyright 2016 The MITRE Corporation
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
 http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
