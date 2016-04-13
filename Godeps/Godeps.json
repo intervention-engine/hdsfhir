@@ -1,0 +1,28 @@
+{
+	"ImportPath": "github.com/intervention-engine/hdsfhir",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v60",
+	"Packages": [
+		"github.com/intervention-engine/hdsfhir"
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/intervention-engine/fhir/models",
+			"Comment": "DSTU1-144-gb623d6b",
+			"Rev": "b623d6b5cafcea539f24ff8525fa666c3ad94e3d"
+		},
+		{
+			"ImportPath": "github.com/pebbe/util",
+			"Rev": "732c49a562eac4233f1e635fdfa58f9c8bc0f969"
+		},
+		{
+			"ImportPath": "gopkg.in/check.v1",
+			"Rev": "64131543e7896d5bcc6bd5a76287eb75ea96c673"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2/bson",
+			"Comment": "r2015.12.06-2-g03c9f3e",
+			"Rev": "03c9f3ee4c14c8e51ee521a6a7d0425658dd6f64"
+		}
+	]
+}
