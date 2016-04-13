@@ -65,7 +65,7 @@ func (s *ProcedureSuite) TestProcedureResults(c *C) {
 	c.Assert(report.EffectivePeriod.End, DeepEquals, NewUnixTime(1320159800).FHIRDateTime())
 	c.Assert(report.Issued, DeepEquals, NewUnixTime(1320159800).FHIRDateTime())
 	c.Assert(report.Result, HasLen, 3)
-	c.Assert(procedure.Report[0].Reference, Equals, "cid:"+report.Id)
+	c.Assert(procedure.Report[0].Reference, Equals, "urn:uuid:"+report.Id)
 
 	for i := 2; i < 5; i++ {
 		c.Assert(procedureModels[i], FitsTypeOf, &fhir.Observation{})
@@ -91,7 +91,7 @@ func (s *ProcedureSuite) TestProcedureResults(c *C) {
 			c.Assert(observation.ValueCodeableConcept.Text, Equals, "Colon Cancer Primary Tumor Size T4a")
 			c.Assert(observation.ValueCodeableConcept.MatchesCode("http://snomed.info/sct", "433491000124102"), Equals, true)
 		}
-		c.Assert(report.Result[i-2].Reference, Equals, "cid:"+observation.Id)
+		c.Assert(report.Result[i-2].Reference, Equals, "urn:uuid:"+observation.Id)
 	}
 }
 

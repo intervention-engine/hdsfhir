@@ -8,6 +8,7 @@ import (
 
 	fhir "github.com/intervention-engine/fhir/models"
 	"github.com/pebbe/util"
+	"github.com/satori/go.uuid"
 	. "gopkg.in/check.v1"
 )
 
@@ -59,7 +60,7 @@ func (s *PatientSuite) TestFHIRModels(c *C) {
 			patientVal = reflect.ValueOf(models[i]).Elem().FieldByName("Patient")
 		}
 		if patientVal.IsValid() {
-			c.Assert(patientVal.Interface().(*fhir.Reference).Reference, Equals, "cid:"+patient.Id)
+			c.Assert(patientVal.Interface().(*fhir.Reference).Reference, Equals, "urn:uuid:"+patient.Id)
 		}
 	}
 
@@ -78,6 +79,59 @@ func (s *PatientSuite) TestFHIRModels(c *C) {
 
 func (s *PatientSuite) TestFHIRModelReferences(c *C) {
 	models := s.Patient.FHIRModels()
+	refs := getAllReferences(models)
+	for i := range refs {
+		c.Assert(isReferenceValid(refs[i], models), Equals, true)
+	}
+}
+
+func (s *PatientSuite) TestFHIRTransactionBundle(c *C) {
+	bundle := s.Patient.FHIRTransactionBundle()
+	c.Assert(bundle.Entry, HasLen, 21)
+	c.Assert(bundle.Entry[0].Resource, FitsTypeOf, &fhir.Patient{})
+	patientID := bundle.Entry[0].Resource.(*fhir.Patient).Id
+	patientRef := "urn:uuid:" + patientID
+	for i := range bundle.Entry {
+		c.Assert(bundle.Entry[i].Request.Method, Equals, "POST")
+		switch t := bundle.Entry[i].Resource.(type) {
+		case *fhir.Patient:
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient")
+		case *fhir.Encounter:
+			c.Assert(t.Patient.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Encounter")
+		case *fhir.Condition:
+			c.Assert(t.Patient.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Condition")
+		case *fhir.Observation:
+			c.Assert(t.Subject.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Observation")
+		case *fhir.Procedure:
+			c.Assert(t.Subject.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Procedure")
+		case *fhir.DiagnosticReport:
+			c.Assert(t.Subject.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "DiagnosticReport")
+		case *fhir.MedicationStatement:
+			c.Assert(t.Patient.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "MedicationStatement")
+		case *fhir.Immunization:
+			c.Assert(t.Patient.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Immunization")
+		case *fhir.AllergyIntolerance:
+			c.Assert(t.Patient.Reference, Equals, patientRef)
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "AllergyIntolerance")
+		default:
+			c.Fail()
+		}
+	}
+}
+
+func (s *PatientSuite) TestFHIRBundleReferences(c *C) {
+	bundle := s.Patient.FHIRTransactionBundle()
+	models := make([]interface{}, len(bundle.Entry))
+	for i := range bundle.Entry {
+		models[i] = bundle.Entry[i].Resource
+	}
 	refs := getAllReferences(models)
 	for i := range refs {
 		c.Assert(isReferenceValid(refs[i], models), Equals, true)
@@ -105,7 +159,9 @@ func getAllReferences(models []interface{}) []*fhir.Reference {
 func isReferenceValid(ref *fhir.Reference, models []interface{}) bool {
 	for i := range models {
 		id := reflect.ValueOf(models[i]).Elem().FieldByName("Id").String()
-		if ref.Reference == "cid:"+id {
+		_, err := uuid.FromString(id)
+		util.CheckErr(err)
+		if ref.Reference == "urn:uuid:"+id {
 			return true
 		}
 	}
