@@ -2,6 +2,7 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"reflect"
 
 	fhir "github.com/intervention-engine/fhir/models"
 )
@@ -75,6 +76,23 @@ func (p *Patient) FHIRModels() []interface{} {
 	}
 
 	return models
+}
+
+// FHIRTransactionBundle returns a FHIR bundle representing a transaction to post all patient data to a server
+func (p *Patient) FHIRTransactionBundle() *fhir.Bundle {
+	bundle := new(fhir.Bundle)
+	bundle.Type = "transaction"
+	fhirModels := p.FHIRModels()
+	bundle.Entry = make([]fhir.BundleEntryComponent, len(fhirModels))
+	for i := range fhirModels {
+		bundle.Entry[i].FullUrl = "urn:uuid:" + reflect.ValueOf(fhirModels[i]).Elem().FieldByName("Id").String()
+		bundle.Entry[i].Resource = fhirModels[i]
+		bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
+			Method: "POST",
+			Url:    reflect.TypeOf(fhirModels[i]).Elem().Name(),
+		}
+	}
+	return bundle
 }
 
 // The "patient" sub-type is needed to avoid infinite recursion in UnmarshalJSON

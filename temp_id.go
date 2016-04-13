@@ -1,29 +1,24 @@
 package hdsfhir
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
+	"sync"
 
 	fhir "github.com/intervention-engine/fhir/models"
+	"github.com/satori/go.uuid"
 )
 
-func init() {
-	rand.Seed(time.Now().UTC().UnixNano())
-}
-
 type TemporallyIdentified struct {
-	tempID string `json:"-"`
+	once   sync.Once `json:"-"`
+	tempID string    `json:"-"`
 }
 
-// Not even remotely thread-safe
 func (t *TemporallyIdentified) GetTempID() string {
-	if t.tempID == "" {
-		t.tempID = strconv.FormatInt(rand.Int63(), 10)
-	}
+	t.once.Do(func() {
+		t.tempID = uuid.NewV4().String()
+	})
 	return t.tempID
 }
 
 func (t *TemporallyIdentified) FHIRReference() *fhir.Reference {
-	return &fhir.Reference{Reference: "cid:" + t.GetTempID()}
+	return &fhir.Reference{Reference: "urn:uuid:" + t.GetTempID()}
 }
