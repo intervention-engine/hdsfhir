@@ -19,7 +19,7 @@ type PatientSuite struct {
 // Hook up gocheck into the "go test" runner.
 func Test(t *testing.T) { TestingT(t) }
 
-func (s *PatientSuite) SetUpSuite(c *C) {
+func (s *PatientSuite) SetUpTest(c *C) {
 	data, err := ioutil.ReadFile("./fixtures/john_peters.json")
 	util.CheckErr(err)
 
@@ -40,6 +40,19 @@ func (s *PatientSuite) TestPatientFHIRModel(c *C) {
 	c.Assert(model.Name[0].Family[0], Equals, "Peters")
 	c.Assert(model.Gender, Equals, "male")
 	c.Assert(model.BirthDate, DeepEquals, NewUnixTime(665420400).FHIRDate())
+	c.Assert(model.Identifier, HasLen, 1)
+	c.Assert(model.Identifier[0].Type.MatchesCode("http://hl7.org/fhir/v2/0203", "MR"), Equals, true)
+	c.Assert(model.Identifier[0].Value, Equals, "bc8f60f4cbde3d6c28974971b6880793")
+}
+
+func (s *PatientSuite) TestPatientFHIRModelWithNoMRN(c *C) {
+	s.Patient.MedicalRecordNumber = ""
+	model := s.Patient.FHIRModel()
+	c.Assert(model, FitsTypeOf, &fhir.Patient{})
+	c.Assert(model.Name, HasLen, 1)
+	c.Assert(model.Gender, Equals, "male")
+	c.Assert(model.BirthDate, DeepEquals, NewUnixTime(665420400).FHIRDate())
+	c.Assert(model.Identifier, HasLen, 0)
 }
 
 func (s *PatientSuite) TestFHIRModels(c *C) {
@@ -86,16 +99,32 @@ func (s *PatientSuite) TestFHIRModelReferences(c *C) {
 }
 
 func (s *PatientSuite) TestFHIRTransactionBundle(c *C) {
-	bundle := s.Patient.FHIRTransactionBundle()
+	s.doTestFHIRTransactionBundle(c, false)
+}
+
+func (s *PatientSuite) TestFHIRTransactionBundleConditionalUpdate(c *C) {
+	s.doTestFHIRTransactionBundle(c, true)
+}
+
+func (s *PatientSuite) doTestFHIRTransactionBundle(c *C, conditionalUpdate bool) {
+	bundle := s.Patient.FHIRTransactionBundle(conditionalUpdate)
 	c.Assert(bundle.Entry, HasLen, 21)
 	c.Assert(bundle.Entry[0].Resource, FitsTypeOf, &fhir.Patient{})
 	patientID := bundle.Entry[0].Resource.(*fhir.Patient).Id
 	patientRef := "urn:uuid:" + patientID
 	for i := range bundle.Entry {
-		c.Assert(bundle.Entry[i].Request.Method, Equals, "POST")
+		if conditionalUpdate && i == 0 {
+			c.Assert(bundle.Entry[i].Request.Method, Equals, "PUT")
+		} else {
+			c.Assert(bundle.Entry[i].Request.Method, Equals, "POST")
+		}
 		switch t := bundle.Entry[i].Resource.(type) {
 		case *fhir.Patient:
-			c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient")
+			if conditionalUpdate {
+				c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient?identifier=bc8f60f4cbde3d6c28974971b6880793")
+			} else {
+				c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient")
+			}
 		case *fhir.Encounter:
 			c.Assert(t.Patient.Reference, Equals, patientRef)
 			c.Assert(bundle.Entry[i].Request.Url, Equals, "Encounter")
@@ -127,7 +156,12 @@ func (s *PatientSuite) TestFHIRTransactionBundle(c *C) {
 }
 
 func (s *PatientSuite) TestFHIRBundleReferences(c *C) {
-	bundle := s.Patient.FHIRTransactionBundle()
+	s.doTestFHIRBundleReferences(c, false)
+	s.doTestFHIRBundleReferences(c, true)
+}
+
+func (s *PatientSuite) doTestFHIRBundleReferences(c *C, conditionalUpdate bool) {
+	bundle := s.Patient.FHIRTransactionBundle(conditionalUpdate)
 	models := make([]interface{}, len(bundle.Entry))
 	for i := range bundle.Entry {
 		models[i] = bundle.Entry[i].Resource
