@@ -2,6 +2,7 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 
 	fhir "github.com/intervention-engine/fhir/models"
@@ -9,17 +10,18 @@ import (
 
 type Patient struct {
 	TemporallyIdentified
-	FirstName     string          `json:"first"`
-	LastName      string          `json:"last"`
-	BirthTime     UnixTime        `json:"birthdate"`
-	Gender        string          `json:"gender"`
-	Encounters    []*Encounter    `json:"encounters"`
-	Conditions    []*Condition    `json:"conditions"`
-	VitalSigns    []*VitalSign    `json:"vital_signs"`
-	Procedures    []*Procedure    `json:"procedures"`
-	Medications   []*Medication   `json:"medications"`
-	Immunizations []*Immunization `json:"immunizations"`
-	Allergies     []*Allergy      `json:"allergies"`
+	MedicalRecordNumber string          `json:"medical_record_number"`
+	FirstName           string          `json:"first"`
+	LastName            string          `json:"last"`
+	BirthTime           UnixTime        `json:"birthdate"`
+	Gender              string          `json:"gender"`
+	Encounters          []*Encounter    `json:"encounters"`
+	Conditions          []*Condition    `json:"conditions"`
+	VitalSigns          []*VitalSign    `json:"vital_signs"`
+	Procedures          []*Procedure    `json:"procedures"`
+	Medications         []*Medication   `json:"medications"`
+	Immunizations       []*Immunization `json:"immunizations"`
+	Allergies           []*Allergy      `json:"allergies"`
 }
 
 // TODO: :care_goals, :medical_equipment, :results, :social_history, :support, :advance_directives, :insurance_providers, :functional_statuses
@@ -37,6 +39,23 @@ func (p *Patient) MatchingEncounterReference(entry Entry) *fhir.Reference {
 func (p *Patient) FHIRModel() *fhir.Patient {
 	fhirPatient := &fhir.Patient{}
 	fhirPatient.Id = p.GetTempID()
+	if p.MedicalRecordNumber != "" {
+		fhirPatient.Identifier = []fhir.Identifier{
+			{
+				Type: &fhir.CodeableConcept{
+					Coding: []fhir.Coding{
+						{
+							System:  "http://hl7.org/fhir/v2/0203",
+							Code:    "MR",
+							Display: "Medical Record Number",
+						},
+					},
+					Text: "Medical Record Number",
+				},
+				Value: p.MedicalRecordNumber,
+			},
+		}
+	}
 	fhirPatient.Name = []fhir.HumanName{fhir.HumanName{Given: []string{p.FirstName}, Family: []string{p.LastName}}}
 	switch p.Gender {
 	case "M":
@@ -79,7 +98,7 @@ func (p *Patient) FHIRModels() []interface{} {
 }
 
 // FHIRTransactionBundle returns a FHIR bundle representing a transaction to post all patient data to a server
-func (p *Patient) FHIRTransactionBundle() *fhir.Bundle {
+func (p *Patient) FHIRTransactionBundle(conditionalUpdate bool) *fhir.Bundle {
 	bundle := new(fhir.Bundle)
 	bundle.Type = "transaction"
 	fhirModels := p.FHIRModels()
@@ -87,9 +106,19 @@ func (p *Patient) FHIRTransactionBundle() *fhir.Bundle {
 	for i := range fhirModels {
 		bundle.Entry[i].FullUrl = "urn:uuid:" + reflect.ValueOf(fhirModels[i]).Elem().FieldByName("Id").String()
 		bundle.Entry[i].Resource = fhirModels[i]
-		bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
-			Method: "POST",
-			Url:    reflect.TypeOf(fhirModels[i]).Elem().Name(),
+		name := reflect.TypeOf(fhirModels[i]).Elem().Name()
+		// Only use conditional put if requested, is a patient, and has an alternate ID (i.e., MRN)
+		if conditionalUpdate && name == "Patient" && len(fhirModels[i].(*fhir.Patient).Identifier) > 0 {
+			pt := fhirModels[i].(*fhir.Patient)
+			bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
+				Method: "PUT",
+				Url:    fmt.Sprintf("%s?identifier=%s", name, pt.Identifier[0].Value),
+			}
+		} else {
+			bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
+				Method: "POST",
+				Url:    name,
+			}
 		}
 	}
 	return bundle
