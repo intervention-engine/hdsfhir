@@ -2,7 +2,7 @@ package hdsfhir
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"reflect"
 
 	fhir "github.com/intervention-engine/fhir/models"
@@ -106,19 +106,14 @@ func (p *Patient) FHIRTransactionBundle(conditionalUpdate bool) *fhir.Bundle {
 	for i := range fhirModels {
 		bundle.Entry[i].FullUrl = "urn:uuid:" + reflect.ValueOf(fhirModels[i]).Elem().FieldByName("Id").String()
 		bundle.Entry[i].Resource = fhirModels[i]
-		name := reflect.TypeOf(fhirModels[i]).Elem().Name()
-		// Only use conditional put if requested, is a patient, and has an alternate ID (i.e., MRN)
-		if conditionalUpdate && name == "Patient" && len(fhirModels[i].(*fhir.Patient).Identifier) > 0 {
-			pt := fhirModels[i].(*fhir.Patient)
-			bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
-				Method: "PUT",
-				Url:    fmt.Sprintf("%s?identifier=%s", name, pt.Identifier[0].Value),
-			}
-		} else {
-			bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
-				Method: "POST",
-				Url:    name,
-			}
+		bundle.Entry[i].Request = &fhir.BundleEntryRequestComponent{
+			Method: "POST",
+			Url:    reflect.TypeOf(fhirModels[i]).Elem().Name(),
+		}
+	}
+	if conditionalUpdate {
+		if err := ConvertToConditionalUpdates(bundle); err != nil {
+			log.Println("Error:", err.Error())
 		}
 	}
 	return bundle
