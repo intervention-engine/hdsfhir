@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/intervention-engine/fhir/models"
 )
@@ -17,55 +18,55 @@ func ConvertToConditionalUpdates(bundle *models.Bundle) error {
 		switch t := entry.Resource.(type) {
 		case *models.AllergyIntolerance:
 			if check(t.Patient, t.Substance, t.Onset) {
-				values.Set("patient", refToParamValue(t.Patient, "Patient"))
-				values.Set("code", ccToParamValue(t.Substance))
-				values.Set("onset", dateToParamValue(t.Onset))
+				addRefParam(values, "patient", t.Patient)
+				addCCParam(values, "substance", t.Substance)
+				addDateParam(values, "onset", t.Onset)
 			}
 		case *models.Condition:
 			if check(t.Patient, t.Code, t.OnsetDateTime) {
-				values.Set("patient", refToParamValue(t.Patient, "Patient"))
-				values.Set("code", ccToParamValue(t.Code))
-				values.Set("onset", dateToParamValue(t.OnsetDateTime))
+				addRefParam(values, "patient", t.Patient)
+				addCCParam(values, "code", t.Code)
+				addDateParam(values, "onset", t.OnsetDateTime)
 			}
 		case *models.DiagnosticReport:
 			// TODO: Consider if this query is precise enough, consider searching on results too
 			if check(t.Subject, t.Code, t.EffectivePeriod) {
-				values.Set("patient", refToParamValue(t.Subject, "Patient"))
-				values.Set("code", ccToParamValue(t.Code))
-				values.Set("date", dateToParamValue(t.EffectivePeriod.Start))
+				addRefParam(values, "patient", t.Subject)
+				addCCParam(values, "code", t.Code)
+				addPeriodParam(values, "date", t.EffectivePeriod)
 			}
 		case *models.Encounter:
 			if check(t.Patient, t.Type, t.Period) {
-				values.Set("patient", refToParamValue(t.Patient, "Patient"))
+				addRefParam(values, "patient", t.Patient)
 				for _, cc := range t.Type {
-					values.Add("type", ccToParamValue(&cc))
+					addCCParam(values, "type", &cc)
 				}
 				// TODO: the date param references "a date within the period the encounter lasted."  Is this OK?
-				values.Set("date", dateToParamValue(t.Period.Start))
+				addPeriodParam(values, "date", t.Period)
 			}
 		case *models.Immunization:
 			if check(t.Patient, t.VaccineCode, t.Date) {
-				values.Set("patient", refToParamValue(t.Patient, "Patient"))
-				values.Set("vaccine-code", ccToParamValue(t.VaccineCode))
-				values.Set("date", dateToParamValue(t.Date))
+				addRefParam(values, "patient", t.Patient)
+				addCCParam(values, "vaccine-code", t.VaccineCode)
+				addDateParam(values, "date", t.Date)
 			}
 		case *models.MedicationStatement:
 			if check(t.Patient, t.MedicationCodeableConcept, t.EffectivePeriod) {
-				values.Set("patient", refToParamValue(t.Patient, "Patient"))
-				values.Set("code", ccToParamValue(t.MedicationCodeableConcept))
-				values.Set("effectivedate", dateToParamValue(t.EffectivePeriod.Start))
+				addRefParam(values, "patient", t.Patient)
+				addCCParam(values, "code", t.MedicationCodeableConcept)
+				addPeriodParam(values, "effectivedate", t.EffectivePeriod)
 			}
 		case *models.Observation:
 			if check(t.Subject, t.Code, t.EffectivePeriod) {
-				values.Set("patient", refToParamValue(t.Subject, "Patient"))
-				values.Set("code", ccToParamValue(t.Code))
-				values.Set("date", dateToParamValue(t.EffectivePeriod.Start))
+				addRefParam(values, "patient", t.Subject)
+				addCCParam(values, "code", t.Code)
+				addPeriodParam(values, "date", t.EffectivePeriod)
 			}
 		case *models.Procedure:
 			if check(t.Subject, t.Code, t.PerformedPeriod) {
-				values.Set("patient", refToParamValue(t.Subject, "Patient"))
-				values.Set("code", ccToParamValue(t.Code))
-				values.Set("date", dateToParamValue(t.PerformedPeriod.Start))
+				addRefParam(values, "patient", t.Subject)
+				addCCParam(values, "code", t.Code)
+				addPeriodParam(values, "date", t.PerformedPeriod)
 			}
 		case *models.ProcedureRequest:
 			// We can't do anything meaningful because ProcedureRequest does not have search params
@@ -111,20 +112,29 @@ func check(things ...interface{}) bool {
 	return true
 }
 
-func ccToParamValue(cc *models.CodeableConcept) string {
+func addCCParam(values url.Values, name string, cc *models.CodeableConcept) {
 	codes := make([]string, len(cc.Coding))
 	for i := range cc.Coding {
 		codes[i] = cc.Coding[i].System + "|" + cc.Coding[i].Code
 	}
 	// sort for predictability (a.k.a., easier testing)
 	sort.Strings(codes)
-	return strings.Join(codes, ",")
+	values.Add(name, strings.Join(codes, ","))
 }
 
-func dateToParamValue(date *models.FHIRDateTime) string {
-	return date.Time.Format("2006-01-02T15:04:05")
+func addDateParam(values url.Values, name string, date *models.FHIRDateTime) {
+	values.Add(name, date.Time.Format("2006-01-02T15:04:05"))
 }
 
-func refToParamValue(ref *models.Reference, resourceType string) string {
-	return resourceType + "/" + strings.TrimPrefix(ref.Reference, "urn:uuid:")
+func addPeriodParam(values url.Values, name string, period *models.Period) {
+	// Due to the way searching on periods is defined, the only way we can try to match on the start date is by using
+	// a combination of sa (starts after) and lt (less than) query parameters.
+	l := period.Start.Time.Add(-1 * time.Second)
+	h := period.Start.Time.Add(1 * time.Second)
+	values.Add(name, "sa"+l.Format("2006-01-02T15:04:05"))
+	values.Add(name, "lt"+h.Format("2006-01-02T15:04:05"))
+}
+
+func addRefParam(values url.Values, name string, ref *models.Reference) {
+	values.Add(name, ref.Reference)
 }
