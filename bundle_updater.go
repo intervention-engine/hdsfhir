@@ -144,7 +144,7 @@ func addCCParam(values url.Values, name string, cc *models.CodeableConcept) {
 }
 
 func addDateParam(values url.Values, name string, date *models.FHIRDateTime) {
-	values.Add(name, date.Time.Format("2006-01-02T15:04:05"))
+	values.Add(name, date.Time.Format("2006-01-02T15:04:05-07:00"))
 }
 
 func addPeriodParam(values url.Values, name string, period *models.Period) {
@@ -152,8 +152,8 @@ func addPeriodParam(values url.Values, name string, period *models.Period) {
 	// a combination of sa (starts after) and lt (less than) query parameters.
 	l := period.Start.Time.Add(-1 * time.Second)
 	h := period.Start.Time.Add(1 * time.Second)
-	values.Add(name, "sa"+l.Format("2006-01-02T15:04:05"))
-	values.Add(name, "lt"+h.Format("2006-01-02T15:04:05"))
+	values.Add(name, "sa"+l.Format("2006-01-02T15:04:05-07:00"))
+	values.Add(name, "lt"+h.Format("2006-01-02T15:04:05-07:00"))
 }
 
 func addRefParam(values url.Values, name string, ref *models.Reference) {
