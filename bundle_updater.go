@@ -1,6 +1,7 @@
 package hdsfhir
 
 import (
+	"fmt"
 	"net/url"
 	"sort"
 	"strings"
@@ -61,6 +62,18 @@ func ConvertToConditionalUpdates(bundle *models.Bundle) error {
 				addRefParam(values, "patient", t.Subject)
 				addCCParam(values, "code", t.Code)
 				addPeriodParam(values, "date", t.EffectivePeriod)
+				if check(t.ValueCodeableConcept) {
+					addCCParam(values, "value-concept", t.ValueCodeableConcept)
+				} else if check(t.ValueQuantity) {
+					q := t.ValueQuantity
+					if q.Code != "" {
+						values.Add("value-quantity", fmt.Sprintf("%g|%s|%s", *q.Value, q.System, q.Code))
+					} else {
+						values.Add("value-quantity", fmt.Sprintf("%g|%s|%s", *q.Value, q.System, q.Unit))
+					}
+				} else if check(t.ValueString) {
+					values.Add("value-string", t.ValueString)
+				}
 			}
 		case *models.Procedure:
 			if check(t.Subject, t.Code, t.PerformedPeriod) {
@@ -103,8 +116,16 @@ func check(things ...interface{}) bool {
 			if t == nil || !check(t.Start) {
 				return false
 			}
+		case *models.Quantity:
+			if t == nil || t.Value == nil {
+				return false
+			}
 		case *models.Reference:
 			if t == nil || t.Reference == "" {
+				return false
+			}
+		case string:
+			if t == "" {
 				return false
 			}
 		}
