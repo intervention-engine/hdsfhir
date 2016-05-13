@@ -118,7 +118,7 @@ func (a *Allergy) convertSeverity() string {
 	case severity.MatchesCode("http://snomed.info/sct", "6736007"):
 		return "moderate"
 	case severity.MatchesCode("http://snomed.info/sct", "371924009"):
-		// Moderate to severe: err on the side of safety, translate to moderate
+		// Moderate to severe: err on the side of safety, translate to severe
 		return "severe"
 	case severity.MatchesCode("http://snomed.info/sct", "24484000"):
 		return "severe"

@@ -147,7 +147,6 @@ func (s *PatientSuite) TestFHIRTransactionBundleConditionalUpdate(c *C) {
 	c.Assert(bundle.Entry[0].Resource, FitsTypeOf, &fhir.Patient{})
 	patientID := bundle.Entry[0].Resource.(*fhir.Patient).Id
 	patientRef := "urn%3Auuid%3A" + patientID
-	_ = patientRef
 	for i := range bundle.Entry {
 		c.Assert(bundle.Entry[i].Request.Method, Equals, "PUT")
 	}
