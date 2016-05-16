@@ -23,7 +23,12 @@ func (a *Allergy) FHIRModels() []interface{} {
 	if a.Reaction != nil {
 		cc := a.Reaction.FHIRCodeableConcept("")
 		fhirAllergy.Reaction = []fhir.AllergyIntoleranceReactionComponent{
-			{Manifestation: []fhir.CodeableConcept{*cc}},
+			{
+				Substance:     fhirAllergy.Substance,
+				Manifestation: []fhir.CodeableConcept{*cc},
+				Onset:         fhirAllergy.Onset,
+				Severity:      a.convertSeverity(),
+			},
 		}
 	}
 
@@ -80,13 +85,43 @@ func (a *Allergy) convertCriticality() string {
 		// Mild to moderate: translate to L
 		return "CRITL"
 	case criticality.MatchesCode("http://snomed.info/sct", "6736007"):
-		// Moderate: touch to call L or H, translate to CRITU (unable to determine)
+		// Moderate: tough to call L or H, translate to CRITU (unable to determine)
 		return "CRITU"
 	case criticality.MatchesCode("http://snomed.info/sct", "371924009"):
 		// Moderate to severe: err on the side of safety, translate to CRITH
 		return "CRITH"
 	case criticality.MatchesCode("http://snomed.info/sct", "24484000"):
 		return "CRITH"
+	}
+
+	return ""
+}
+
+// convertSeverity maps the severity to a CodeableConcept. FHIR has a "required" value set for
+// severity:
+//   http://hl7.org/fhir/DSTU2/valueset-reaction-event-severity.html
+// If the severity can't be mapped, severity will be left blank
+func (a *Allergy) convertSeverity() string {
+	if a.Severity == nil {
+		return ""
+	}
+
+	severity := a.Severity.FHIRCodeableConcept("")
+	switch {
+	case severity.MatchesCode("http://snomed.info/sct", "399166001"):
+		return "severe"
+	case severity.MatchesCode("http://snomed.info/sct", "255604002"):
+		return "mild"
+	case severity.MatchesCode("http://snomed.info/sct", "371923003"):
+		// Mild to moderate: translate to moderate
+		return "moderate"
+	case severity.MatchesCode("http://snomed.info/sct", "6736007"):
+		return "moderate"
+	case severity.MatchesCode("http://snomed.info/sct", "371924009"):
+		// Moderate to severe: err on the side of safety, translate to severe
+		return "severe"
+	case severity.MatchesCode("http://snomed.info/sct", "24484000"):
+		return "severe"
 	}
 
 	return ""

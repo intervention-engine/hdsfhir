@@ -2,9 +2,13 @@ package hdsfhir
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"net/url"
 	"reflect"
+	"strings"
 	"testing"
+	"time"
 
 	fhir "github.com/intervention-engine/fhir/models"
 	"github.com/pebbe/util"
@@ -99,32 +103,16 @@ func (s *PatientSuite) TestFHIRModelReferences(c *C) {
 }
 
 func (s *PatientSuite) TestFHIRTransactionBundle(c *C) {
-	s.doTestFHIRTransactionBundle(c, false)
-}
-
-func (s *PatientSuite) TestFHIRTransactionBundleConditionalUpdate(c *C) {
-	s.doTestFHIRTransactionBundle(c, true)
-}
-
-func (s *PatientSuite) doTestFHIRTransactionBundle(c *C, conditionalUpdate bool) {
-	bundle := s.Patient.FHIRTransactionBundle(conditionalUpdate)
+	bundle := s.Patient.FHIRTransactionBundle(false)
 	c.Assert(bundle.Entry, HasLen, 21)
 	c.Assert(bundle.Entry[0].Resource, FitsTypeOf, &fhir.Patient{})
 	patientID := bundle.Entry[0].Resource.(*fhir.Patient).Id
 	patientRef := "urn:uuid:" + patientID
 	for i := range bundle.Entry {
-		if conditionalUpdate && i == 0 {
-			c.Assert(bundle.Entry[i].Request.Method, Equals, "PUT")
-		} else {
-			c.Assert(bundle.Entry[i].Request.Method, Equals, "POST")
-		}
+		c.Assert(bundle.Entry[i].Request.Method, Equals, "POST")
 		switch t := bundle.Entry[i].Resource.(type) {
 		case *fhir.Patient:
-			if conditionalUpdate {
-				c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient?identifier=bc8f60f4cbde3d6c28974971b6880793")
-			} else {
-				c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient")
-			}
+			c.Assert(bundle.Entry[i].Request.Url, Equals, "Patient")
 		case *fhir.Encounter:
 			c.Assert(t.Patient.Reference, Equals, patientRef)
 			c.Assert(bundle.Entry[i].Request.Url, Equals, "Encounter")
@@ -153,6 +141,61 @@ func (s *PatientSuite) doTestFHIRTransactionBundle(c *C, conditionalUpdate bool)
 			c.Fail()
 		}
 	}
+}
+
+func (s *PatientSuite) TestFHIRTransactionBundleConditionalUpdate(c *C) {
+	bundle := s.Patient.FHIRTransactionBundle(true)
+	c.Assert(bundle.Entry, HasLen, 21)
+	c.Assert(bundle.Entry[0].Resource, FitsTypeOf, &fhir.Patient{})
+	patientID := bundle.Entry[0].Resource.(*fhir.Patient).Id
+	patientRef := url.QueryEscape("urn:uuid:" + patientID)
+	for i := range bundle.Entry {
+		c.Assert(bundle.Entry[i].Request.Method, Equals, "PUT")
+	}
+	assertURL(c, bundle, 0, "Patient?identifier=bc8f60f4cbde3d6c28974971b6880793")
+	assertURL(c, bundle, 1, "Encounter?date=sa%s&date=lt%s&patient=%s&type=http://www.ama-assn.org/go/cpt|99201", ld("2011-11-01T11:59:59"), ld("2011-11-01T12:00:01"), patientRef)
+	assertURL(c, bundle, 2, "Encounter?date=sa%s&date=lt%s&patient=%s&type=http://www.ama-assn.org/go/cpt|99201", ld("2012-10-01T11:59:59"), ld("2012-10-01T12:00:01"), patientRef)
+	assertURL(c, bundle, 3, "Encounter?date=sa%s&date=lt%s&patient=%s&type=http://www.ama-assn.org/go/cpt|99201", ld("2012-11-01T11:59:59"), ld("2012-11-01T12:00:01"), patientRef)
+	assertURL(c, bundle, 4, "Encounter?date=sa%s&date=lt%s&patient=%s&type=http://snomed.info/sct|171047005", ld("2012-11-01T12:44:59"), ld("2012-11-01T12:45:01"), patientRef)
+	assertURL(c, bundle, 5, "Condition?code=http://hl7.org/fhir/sid/icd-10|I50.1,http://hl7.org/fhir/sid/icd-9|428.0,http://snomed.info/sct|10091002&onset=%s&patient=%s", ld("2012-03-01T12:00:00"), patientRef)
+	assertURL(c, bundle, 6, "Condition?code=http://snomed.info/sct|981000124106&onset=%s&patient=%s", ld("2012-03-01T12:05:00"), patientRef)
+	assertURL(c, bundle, 7, "Condition?code=http://hl7.org/fhir/sid/icd-10|I20.0,http://hl7.org/fhir/sid/icd-9|411.0,http://snomed.info/sct|123641001&onset=%s&patient=%s", ld("2012-03-01T12:05:00"), patientRef)
+	assertURL(c, bundle, 8, "Condition?code=http://hl7.org/fhir/sid/icd-10|I20.0,http://hl7.org/fhir/sid/icd-9|411.0,http://snomed.info/sct|123641001&onset=%s&patient=%s", ld("2012-03-01T12:05:00"), patientRef)
+	assertURL(c, bundle, 9, "Condition?code=http://hl7.org/fhir/sid/icd-9|401.1,http://snomed.info/sct|10725009&onset=%s&patient=%s", ld("2012-03-01T12:30:00"), patientRef)
+	assertURL(c, bundle, 10, "Observation?code=http://loinc.org|17856-6&date=sa%s&date=lt%s&patient=%s&value-quantity=8||%%25", ld("2011-11-01T12:16:39"), ld("2011-11-01T12:16:41"), patientRef)
+	assertURL(c, bundle, 11, "Procedure?code=http://snomed.info/sct|116783008&date=sa%s&date=lt%s&patient=%s", ld("2011-11-01T12:16:39"), ld("2011-11-01T12:16:41"), patientRef)
+	assertURL(c, bundle, 12, "DiagnosticReport?code=http://loinc.org|59776-5&date=sa%s&date=lt%s&patient=%s", ld("2011-11-01T12:16:39"), ld("2011-11-01T12:16:41"), patientRef)
+	assertURL(c, bundle, 13, "Observation?code=http://snomed.info/sct|116783008&date=sa%s&date=lt%s&patient=%s&value-concept=http://snomed.info/sct|433581000124101", ld("2011-11-01T12:16:39"), ld("2011-11-01T12:16:41"), patientRef)
+	assertURL(c, bundle, 14, "Observation?code=http://snomed.info/sct|116783008&date=sa%s&date=lt%s&patient=%s&value-concept=http://snomed.info/sct|433571000124104", ld("2011-11-01T12:16:39"), ld("2011-11-01T12:16:41"), patientRef)
+	assertURL(c, bundle, 15, "Observation?code=http://snomed.info/sct|116783008&date=sa%s&date=lt%s&patient=%s&value-concept=http://snomed.info/sct|433491000124102", ld("2011-11-01T12:16:39"), ld("2011-11-01T12:16:41"), patientRef)
+	assertURL(c, bundle, 16, "Procedure?code=http://hl7.org/fhir/sid/icd-10|0210093,http://hl7.org/fhir/sid/icd-9|36.10,http://snomed.info/sct|10190003&date=sa%s&date=lt%s&patient=%s", ld("2013-03-02T15:44:59"), ld("2013-03-02T15:45:01"), patientRef)
+	assertURL(c, bundle, 17, "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm/|1000048&effectivedate=sa%s&effectivedate=lt%s&patient=%s", ld("2012-10-01T11:59:59"), ld("2012-10-01T12:00:01"), patientRef)
+	assertURL(c, bundle, 18, "Immunization?date=%s&patient=%s&vaccine-code=http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp%%3Frpt%%3Dcvx|33", ld("2011-08-15T12:00:00"), patientRef)
+	assertURL(c, bundle, 19, "Immunization?date=%s&patient=%s&vaccine-code=http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp%%3Frpt%%3Dcvx|03", ld("2010-01-11T00:08:28"), patientRef)
+	assertURL(c, bundle, 20, "AllergyIntolerance?substance=http://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp%%3Frpt%%3Dcvx|111&onset=%s&patient=%s", ld("2012-01-01T05:42:00"), patientRef)
+}
+
+// ld takes in a string utc date and converts to a string date in the local timezone
+func ld(utcDate string) string {
+	if utcDate == "" {
+		return ""
+	}
+	d, err := time.ParseInLocation("2006-01-02T15:04:05", utcDate, time.UTC)
+	util.CheckErr(err)
+	local := d.In(time.Local).Format("2006-01-02T15:04:05-07:00")
+	return url.QueryEscape(local)
+}
+
+func assertURL(c *C, b *fhir.Bundle, i int, u string, args ...interface{}) {
+	u = fmt.Sprintf(u, args...)
+	obtSplit := strings.SplitN(b.Entry[i].Request.Url, "?", 2)
+	obtVals, err := url.ParseQuery(obtSplit[1])
+	util.CheckErr(err)
+	expSplit := strings.SplitN(u, "?", 2)
+	expVals, err := url.ParseQuery(expSplit[1])
+	util.CheckErr(err)
+	c.Assert(obtSplit[0], Equals, expSplit[0])
+	c.Assert(obtVals, DeepEquals, expVals)
 }
 
 func (s *PatientSuite) TestFHIRBundleReferences(c *C) {
