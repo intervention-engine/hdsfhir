@@ -40,7 +40,7 @@ func (s *MedicationSuite) TestMedicationOrdered(c *C) {
 	c.Assert(medication.EffectivePeriod.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
 	c.Assert(medication.MedicationCodeableConcept.Text, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
 	c.Assert(medication.MedicationCodeableConcept.Coding, HasLen, 1)
-	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
+	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm", "1000048"), Equals, true)
 }
 
 func (s *MedicationSuite) TestMedicationDispensed(c *C) {
@@ -53,7 +53,7 @@ func (s *MedicationSuite) TestMedicationDispensed(c *C) {
 	c.Assert(medication.EffectivePeriod.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
 	c.Assert(medication.MedicationCodeableConcept.Text, Equals, "Medication, Dispensed: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
 	c.Assert(medication.MedicationCodeableConcept.Coding, HasLen, 1)
-	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
+	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm", "1000048"), Equals, true)
 }
 
 func (s *MedicationSuite) TestMedicationNotOrdered(c *C) {
@@ -69,7 +69,7 @@ func (s *MedicationSuite) TestMedicationNotOrdered(c *C) {
 	c.Assert(medication.EffectivePeriod.End, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
 	c.Assert(medication.MedicationCodeableConcept.Text, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
 	c.Assert(medication.MedicationCodeableConcept.Coding, HasLen, 1)
-	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
+	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm", "1000048"), Equals, true)
 }
 
 func (s *MedicationSuite) TestImmunizationAdministered(c *C) {
@@ -110,5 +110,5 @@ func (s *MedicationSuite) TestNullEndTime(c *C) {
 	c.Assert(medication.EffectivePeriod.End, IsNil)
 	c.Assert(medication.MedicationCodeableConcept.Text, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
 	c.Assert(medication.MedicationCodeableConcept.Coding, HasLen, 1)
-	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
+	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm", "1000048"), Equals, true)
 }
