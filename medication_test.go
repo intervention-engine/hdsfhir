@@ -99,3 +99,16 @@ func (s *MedicationSuite) TestImmunizationNotAdministered(c *C) {
 	c.Assert(immunization.Explanation.ReasonNotGiven[0].Coding, HasLen, 1)
 	c.Assert(immunization.Explanation.ReasonNotGiven[0].MatchesCode("http://snomed.info/sct", "591000119102"), Equals, true)
 }
+
+func (s *MedicationSuite) TestNullEndTime(c *C) {
+	medication := s.Medications["nullEndTime"].FHIRModels()[0].(*fhir.MedicationStatement)
+	c.Assert(medication.Patient, DeepEquals, s.Patient.FHIRReference())
+	c.Assert(medication.Status, Equals, "intended")
+	c.Assert(medication.WasNotTaken, IsNil)
+	c.Assert(medication.ReasonNotTaken, IsNil)
+	c.Assert(medication.EffectivePeriod.Start, DeepEquals, NewUnixTime(1349092800).FHIRDateTime())
+	c.Assert(medication.EffectivePeriod.End, IsNil)
+	c.Assert(medication.MedicationCodeableConcept.Text, Equals, "Medication, Order: BH Antidepressant medication (Code List: 2.16.840.1.113883.3.1257.1.972)")
+	c.Assert(medication.MedicationCodeableConcept.Coding, HasLen, 1)
+	c.Assert(medication.MedicationCodeableConcept.MatchesCode("http://www.nlm.nih.gov/research/umls/rxnorm/", "1000048"), Equals, true)
+}

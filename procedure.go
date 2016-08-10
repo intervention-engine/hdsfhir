@@ -83,7 +83,9 @@ func (p *Procedure) convertProcedure() []interface{} {
 		fhirReport.Subject = p.Patient.FHIRReference()
 		fhirReport.Encounter = p.Patient.MatchingEncounterReference(p.Entry)
 		fhirReport.EffectivePeriod = p.GetFHIRPeriod()
-		fhirReport.Issued = p.EndTime.FHIRDateTime() // Not perfect, but it's a required field
+		if p.EndTime != nil {
+			fhirReport.Issued = p.EndTime.FHIRDateTime() // Not perfect, but it's a required field
+		}
 		// TODO: Technically, "performer" is required, but we don't want to make up data
 		fhirReport.Result = make([]fhir.Reference, len(p.Values))
 		models = append(models, fhirReport)
@@ -120,7 +122,7 @@ func (p *Procedure) convertProcedureStatus() string {
 		status = "in-progress"
 	case statusConcept.MatchesCode("http://hl7.org/fhir/ValueSet/v3-ActStatus", "obsolete"):
 		status = "entered-in-error"
-	case len(p.StatusCode) == 0 && p.EndTime == 0:
+	case len(p.StatusCode) == 0 && p.EndTime == nil:
 		status = "in-progress"
 	default:
 		status = "completed"
@@ -139,11 +141,11 @@ func (p *Procedure) convertProcedureRequest() []interface{} {
 		cc := p.AnatomicalTarget.FHIRCodeableConcept("")
 		fhirProcedureRequest.BodySite = []fhir.CodeableConcept{*cc}
 	}
-	if p.Time > 0 {
+	if p.Time != nil {
 		fhirProcedureRequest.OrderedOn = p.Time.FHIRDateTime()
-	} else if p.StartTime > 0 {
+	} else if p.StartTime != nil {
 		fhirProcedureRequest.OrderedOn = p.StartTime.FHIRDateTime()
-	} else if p.EndTime > 0 {
+	} else if p.EndTime != nil {
 		fhirProcedureRequest.OrderedOn = p.EndTime.FHIRDateTime()
 	}
 	fhirProcedureRequest.Encounter = p.Patient.MatchingEncounterReference(p.Entry)

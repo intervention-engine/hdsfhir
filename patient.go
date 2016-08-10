@@ -13,7 +13,7 @@ type Patient struct {
 	MedicalRecordNumber string          `json:"medical_record_number"`
 	FirstName           string          `json:"first"`
 	LastName            string          `json:"last"`
-	BirthTime           UnixTime        `json:"birthdate"`
+	BirthTime           *UnixTime       `json:"birthdate"`
 	Gender              string          `json:"gender"`
 	Encounters          []*Encounter    `json:"encounters"`
 	Conditions          []*Condition    `json:"conditions"`
@@ -28,8 +28,10 @@ type Patient struct {
 
 func (p *Patient) MatchingEncounterReference(entry Entry) *fhir.Reference {
 	for _, encounter := range p.Encounters {
-		// TODO: Overlaps may not be the right thing here... maybe closest?
-		if encounter.StartTime <= entry.EndTime && encounter.EndTime >= entry.StartTime {
+		// TODO: Tough to do right.  Most conservative approach is to only match things that start during the encounter
+		if entry.StartTime != nil && encounter.StartTime != nil && encounter.EndTime != nil &&
+			*encounter.StartTime <= *entry.StartTime && *entry.StartTime <= *encounter.EndTime {
+
 			return encounter.FHIRReference()
 		}
 	}
@@ -65,7 +67,9 @@ func (p *Patient) FHIRModel() *fhir.Patient {
 	default:
 		fhirPatient.Gender = "unknown"
 	}
-	fhirPatient.BirthDate = p.BirthTime.FHIRDate()
+	if p.BirthTime != nil {
+		fhirPatient.BirthDate = p.BirthTime.FHIRDate()
+	}
 	return fhirPatient
 }
 
