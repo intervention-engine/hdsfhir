@@ -22,10 +22,10 @@ func (c *Condition) FHIRModels() []interface{} {
 		fhirCondition.VerificationStatus = "confirmed"
 	}
 	fhirCondition.Severity = c.convertSeverity()
-	if c.StartTime != 0 {
+	if c.StartTime != nil {
 		fhirCondition.OnsetDateTime = c.StartTime.FHIRDateTime()
 	}
-	if c.EndTime != 0 {
+	if c.EndTime != nil {
 		fhirCondition.AbatementDateTime = c.EndTime.FHIRDateTime()
 	}
 
@@ -50,8 +50,8 @@ func (c *Condition) convertClinicalStatus() string {
 	}
 
 	// In order to remain consistent, fix the status if there is an end date (abatement)
-	// and it is after the start date (onset)
-	if status == "" && c.EndTime != 0 && c.EndTime != c.StartTime {
+	// and it doesn't match the start date (in which case we can't be sure it's really an end)
+	if status == "" && c.EndTime != nil && c.StartTime != nil && *c.EndTime != *c.StartTime {
 		status = "resolved"
 	}
 

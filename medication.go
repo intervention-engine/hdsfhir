@@ -69,7 +69,7 @@ func (m *Medication) convertMedicationStatus() string {
 		status = "intended"
 	case m.MoodCode == "RQO":
 		status = "intended"
-	case len(m.StatusCode) == 0 && m.EndTime == 0:
+	case len(m.StatusCode) == 0 && m.EndTime == nil:
 		status = "active"
 	default:
 		status = "completed"
@@ -82,7 +82,9 @@ func (m *Medication) convertImmunization() []interface{} {
 	fhirImmunization := &fhir.Immunization{}
 	fhirImmunization.Id = m.GetTempID()
 	fhirImmunization.Status = m.convertImmunizationStatus()
-	fhirImmunization.Date = m.StartTime.FHIRDateTime()
+	if m.StartTime != nil {
+		fhirImmunization.Date = m.StartTime.FHIRDateTime()
+	}
 	fhirImmunization.VaccineCode = m.Codes.FHIRCodeableConcept(m.Description)
 	fhirImmunization.Patient = m.Patient.FHIRReference()
 	if m.NegationInd {
@@ -128,7 +130,7 @@ func (m *Medication) convertImmunizationStatus() string {
 		status = "intended"
 	case m.MoodCode == "RQO":
 		status = "intended"
-	case len(m.StatusCode) == 0 && m.EndTime == 0:
+	case len(m.StatusCode) == 0 && m.EndTime == nil:
 		status = "in-progress"
 	default:
 		status = "completed"

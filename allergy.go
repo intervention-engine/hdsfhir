@@ -11,9 +11,9 @@ type Allergy struct {
 func (a *Allergy) FHIRModels() []interface{} {
 	fhirAllergy := &fhir.AllergyIntolerance{}
 	fhirAllergy.Id = a.GetTempID()
-	if a.StartTime != 0 {
+	if a.StartTime != nil {
 		fhirAllergy.Onset = a.StartTime.FHIRDateTime()
-	} else if a.Time != 0 {
+	} else if a.Time != nil {
 		fhirAllergy.Onset = a.Time.FHIRDateTime()
 	}
 	fhirAllergy.Patient = a.Patient.FHIRReference()
@@ -58,8 +58,8 @@ func (a *Allergy) convertStatus() string {
 	}
 
 	// In order to remain consistent, fix the status if there is an end date
-	// and it is after the start date (onset)
-	if status == "" && a.EndTime != 0 && a.EndTime != a.StartTime {
+	// and it doesn't match the start date (in which case we can't be sure it's really an end)
+	if status == "" && a.EndTime != nil && a.StartTime != nil && *a.EndTime != *a.StartTime {
 		status = "resolved"
 	}
 

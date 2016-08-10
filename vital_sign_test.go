@@ -26,7 +26,7 @@ func (s *VitalSignSuite) SetUpSuite(c *C) {
 	util.CheckErr(err)
 
 	s.Patient = &Patient{}
-	s.Encounter = &Encounter{Entry: Entry{StartTime: 1320148800, EndTime: 1320152400}}
+	s.Encounter = &Encounter{Entry: Entry{StartTime: NewUnixTime(1320148800), EndTime: NewUnixTime(1320152400)}}
 	s.Patient.Encounters = []*Encounter{s.Encounter}
 	for _, vital := range s.VitalSigns {
 		vital.Patient = s.Patient

@@ -11,7 +11,9 @@ func (i *Immunization) FHIRModels() []interface{} {
 	fhirImmunization := &fhir.Immunization{}
 	fhirImmunization.Id = i.GetTempID()
 	fhirImmunization.Status = "completed"
-	fhirImmunization.Date = i.Time.FHIRDateTime()
+	if i.Time != nil {
+		fhirImmunization.Date = i.Time.FHIRDateTime()
+	}
 	fhirImmunization.VaccineCode = i.Codes.FHIRCodeableConcept(i.Description)
 	fhirImmunization.Patient = i.Patient.FHIRReference()
 	if i.NegationInd {
